@@ -23,30 +23,21 @@ enum PaymentStatus {
   COMPLETED          // Admin approved
   FAILED             // Admin fully rejected
 }
-enum PresentationType {
-  ORAL
-  POSTER
-}
-
-enum AbstractStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
 
 // --- MODELS ---
 model Delegate {
-  id          String           @id @default(uuid())
-  referenceId String           @unique
-  fullName    String
-  affiliation String
-  email       String           @unique
-  category    DelegateCategory
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id                String           @id @default(uuid())
+  referenceId       String           @unique
+  fullName          String
+  affiliation       String
+  email             String           @unique
+  category          DelegateCategory
+  participationType String           @default("GENERAL_ATTENDEE") // GENERAL_ATTENDEE, ORAL_PRESENTER, POSTER_PRESENTER
+  linkedAbstractId  String?          // The ABS-XXXXXX-26 ID, if they have one
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
-  payment     Payment?
-  abstracts   Abstract[]
+  payment           Payment?
 }
 
 model Payment {
@@ -63,26 +54,14 @@ model Payment {
   delegate        Delegate      @relation(fields: [delegateId], references: [id], onDelete: Cascade)
 }
 
-model Abstract {
-  id               String           @id @default(uuid())
-  delegateId       String
-  title            String
-  authorNames      String           // Stored as a comma-separated string for simplicity
-  presentationType PresentationType
-  documentUrl      String           // URL from Supabase Storage / Vercel Blob
-  status           AbstractStatus   @default(PENDING)
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
-
-  delegate         Delegate         @relation(fields: [delegateId], references: [id], onDelete: Cascade)
-}
-
 model Submission {
-  id          String   @id @default(uuid())
-  title       String
-  authors     String
-  type        String   // Oral or Poster
-  fileUrl     String
-  referenceId String   @unique
-  createdAt   DateTime @default(now())
+  id             String   @id @default(uuid())
+  referenceId    String   @unique // ABS-XXXXXX-26
+  title          String
+  authors        String
+  presenterEmail String   // CRITICAL: We need this to link to Delegate!
+  type           String   // Oral Presentation or Poster Presentation
+  fileUrl        String
+  status         String   @default("PENDING_REVIEW") // PENDING_REVIEW, ACCEPTED_ORAL, ACCEPTED_POSTER, REJECTED
+  createdAt      DateTime @default(now())
 }

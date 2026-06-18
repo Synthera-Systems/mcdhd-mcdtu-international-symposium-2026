@@ -23,7 +23,14 @@ const staggerContainer: Variants = {
 export default function RegistrationPage() {
   // --- Form State ---
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
-  const [formData, setFormData] = useState({ fullName: "", affiliation: "", email: "", utrNumber: "" });
+  const [formData, setFormData] = useState({ 
+    fullName: "", 
+    affiliation: "", 
+    email: "", 
+    utrNumber: "",
+    participationType: "GENERAL_ATTENDEE", // Added
+    linkedAbstractId: "" // Added
+  });
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   
   // --- UI State ---
@@ -113,7 +120,7 @@ export default function RegistrationPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
+          ...formData, // Now includes participationType and linkedAbstractId
           category: selectedTier,
           screenshotUrl: publicUrlData.publicUrl,
         })
@@ -213,7 +220,6 @@ export default function RegistrationPage() {
   return (
     <div className="w-full min-h-screen bg-surface pt-12 pb-24 px-6 md:px-12 lg:px-24">
       
-      
       <motion.div className="max-w-[1280px] mx-auto mb-16 text-center" initial="hidden" animate="visible" variants={staggerContainer}>
         <motion.p variants={fadeUp} className="text-secondary-container font-inter font-bold tracking-widest text-xs uppercase mb-4">
           Join the Scientific Dialogue
@@ -226,7 +232,6 @@ export default function RegistrationPage() {
         </motion.p>
       </motion.div>
 
-      
       <motion.div className="max-w-[1280px] mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-16" initial="hidden" animate="visible" variants={staggerContainer}>
         {pricingTiers.map((tier) => (
           <motion.div 
@@ -277,7 +282,6 @@ export default function RegistrationPage() {
         ))}
       </motion.div>
 
-      
       <motion.div variants={fadeUp} initial="hidden" animate="visible" className="max-w-[1000px] mx-auto mb-16 bg-secondary/5 border border-secondary/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
         <div className="flex items-center gap-4">
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center border border-secondary/20 shrink-0 shadow-sm">
@@ -294,7 +298,6 @@ export default function RegistrationPage() {
         </Link>
       </motion.div>
 
-      
       <AnimatePresence>
         {selectedTier && (
           <motion.div 
@@ -332,6 +335,89 @@ export default function RegistrationPage() {
                     <label className="font-inter text-xs font-bold text-on-surface-variant uppercase tracking-wide">Email Address</label>
                     <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="email@university.edu" className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-4 py-3 font-inter text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" />
                   </div>
+                </div>
+
+                <hr className="border-surface-dim/30" />
+
+                {/* --- NEW: Participation Type Section --- */}
+                <div className="space-y-6">
+                  <label className="font-inter text-xs font-bold text-on-surface-variant uppercase tracking-wide">
+                    Participation Role
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {[
+                      { id: "GENERAL_ATTENDEE", label: "General Attendee", desc: "Attending without presenting" },
+                      { id: "ORAL_PRESENTER", label: "Oral Presenter", desc: "Approved for stage presentation" },
+                      { id: "POSTER_PRESENTER", label: "Poster Presenter", desc: "Approved for poster session" }
+                    ].map((role) => (
+                      <div 
+                        key={role.id}
+                        onClick={() => setFormData({...formData, participationType: role.id})}
+                        className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                          formData.participationType === role.id 
+                            ? "border-secondary bg-secondary/5 ring-1 ring-secondary shadow-sm" 
+                            : "border-surface-dim/50 hover:border-secondary/30 bg-surface-bright"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 ${formData.participationType === role.id ? "border-secondary" : "border-surface-dim"}`}>
+                            {formData.participationType === role.id && <div className="w-2 h-2 rounded-full bg-secondary" />}
+                          </div>
+                          <p className={`font-inter text-sm font-bold ${formData.participationType === role.id ? "text-secondary" : "text-primary"}`}>{role.label}</p>
+                        </div>
+                        <p className="font-inter text-[11px] text-on-surface-variant ml-7 leading-relaxed">{role.desc}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Contextual Box based on selection */}
+                  <AnimatePresence mode="wait">
+                    {formData.participationType !== "GENERAL_ATTENDEE" ? (
+                      <motion.div 
+                        key="presenter-input"
+                        initial={{ opacity: 0, height: 0, y: -10 }} 
+                        animate={{ opacity: 1, height: "auto", y: 0 }} 
+                        exit={{ opacity: 0, height: 0, y: -10 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="bg-surface-bright border border-surface-dim/50 rounded-xl p-6">
+                          <label className="font-inter text-xs font-bold text-on-surface-variant uppercase tracking-wide">
+                            Approved Abstract ID <span className="text-secondary-container lowercase tracking-normal font-normal">(Optional)</span>
+                          </label>
+                          <input 
+                            type="text" 
+                            value={formData.linkedAbstractId}
+                            onChange={e => setFormData({...formData, linkedAbstractId: e.target.value.toUpperCase()})}
+                            placeholder="e.g. ABS-A1B2C3-26" 
+                            className="w-full mt-3 bg-white border border-surface-dim/50 rounded-lg px-4 py-3 font-mono text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" 
+                          />
+                          <p className="font-inter text-[11px] text-on-surface-variant mt-3 leading-relaxed">
+                            If your abstract was approved, enter the ID from your acceptance email. If you are registering first and submitting later, you can leave this blank.
+                          </p>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div 
+                        key="attendee-hint"
+                        initial={{ opacity: 0, height: 0, y: -10 }} 
+                        animate={{ opacity: 1, height: "auto", y: 0 }} 
+                        exit={{ opacity: 0, height: 0, y: -10 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="bg-secondary/5 border border-secondary/20 rounded-xl p-5 flex items-start gap-4">
+                          <div className="bg-white p-2 rounded-full shadow-sm shrink-0 mt-0.5 border border-secondary/10">
+                            <svg className="w-4 h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                          </div>
+                          <div>
+                            <p className="font-inter text-sm font-bold text-primary mb-1">Planning to submit an abstract later?</p>
+                            <p className="font-inter text-xs text-secondary-container leading-relaxed">
+                              You can secure your registration as a General Attendee now. When you submit your research in the <Link href="/submissions" className="underline font-medium hover:text-secondary">Submissions tab</Link>, just ensure you use the same email address (<span className="font-mono font-bold bg-white px-1 py-0.5 rounded">{formData.email || 'roya9435@gmail.com'}</span>) so we can automatically link them.
+                            </p>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 <hr className="border-surface-dim/30" />

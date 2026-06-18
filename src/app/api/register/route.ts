@@ -12,7 +12,9 @@ export async function POST(request: Request) {
       email, 
       category, 
       utrNumber, 
-      screenshotUrl 
+      screenshotUrl,
+      participationType, // NEW: Extracted from frontend
+      linkedAbstractId   // NEW: Extracted from frontend
     } = body;
 
     // 1. Basic validation
@@ -59,6 +61,8 @@ export async function POST(request: Request) {
         affiliation,
         email,
         category: category.toUpperCase(),
+        participationType: participationType || "GENERAL_ATTENDEE", // NEW: Save to DB
+        linkedAbstractId: linkedAbstractId || null,                 // NEW: Save to DB
         referenceId,
         payment: {
           create: {

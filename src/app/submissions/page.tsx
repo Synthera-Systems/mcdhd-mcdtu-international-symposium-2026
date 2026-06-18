@@ -3,6 +3,7 @@
 import { motion, Variants } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 const springInteraction = {
   whileTap: { scale: 0.97 },
@@ -21,7 +22,12 @@ const staggerContainer: Variants = {
 
 export default function SubmissionsPage() {
   // --- Form State ---
-  const [formData, setFormData] = useState({ title: "", authors: "", type: "Oral Presentation" });
+  const [formData, setFormData] = useState({ 
+    title: "", 
+    authors: "", 
+    presenterEmail: "", // NEW FIELD added to state
+    type: "Oral Presentation" 
+  });
   const [abstractFile, setAbstractFile] = useState<File | null>(null);
   
   // --- UI State ---
@@ -79,7 +85,8 @@ export default function SubmissionsPage() {
     e.preventDefault();
     setError(null);
 
-    if (!formData.title || !formData.authors || !abstractFile) {
+    // Added presenterEmail to required validation
+    if (!formData.title || !formData.authors || !formData.presenterEmail || !abstractFile) {
       setError("Please fill all required fields and upload your abstract document.");
       return;
     }
@@ -184,13 +191,17 @@ export default function SubmissionsPage() {
             )}
           </div>
           
-          <button 
-            onClick={() => window.location.reload()} 
-            className="text-sm font-inter text-secondary hover:text-secondary-container hover:underline transition-colors font-medium flex items-center justify-center gap-2 mx-auto"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            Submit another abstract
-          </button>
+          <div className="flex flex-col items-center gap-4">
+            <Link href="/registration" className="w-full max-w-sm bg-primary text-white font-inter font-medium py-3 rounded-xl hover:bg-primary-container transition-colors shadow-sm">
+              Proceed to Registration
+            </Link>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="text-sm font-inter text-secondary hover:text-secondary-container hover:underline transition-colors font-medium flex items-center justify-center gap-2"
+            >
+              Submit another abstract
+            </button>
+          </div>
         </motion.div>
       </div>
     );
@@ -308,17 +319,32 @@ export default function SubmissionsPage() {
                     className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-4 py-3 font-inter text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
                   />
                 </div>
+                
+                {/* NEW FIELD: Presenter Email */}
                 <div className="space-y-2">
-                  <label className="font-inter text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presentation Type</label>
-                  <select 
-                    value={formData.type}
-                    onChange={(e) => setFormData({...formData, type: e.target.value})}
-                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-4 py-3 font-inter text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors appearance-none"
-                  >
-                    <option value="Oral Presentation">Oral Presentation</option>
-                    <option value="Poster Presentation">Poster Presentation</option>
-                  </select>
+                  <label className="font-inter text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presenter Email</label>
+                  <input 
+                    required
+                    type="email" 
+                    value={formData.presenterEmail}
+                    onChange={(e) => setFormData({...formData, presenterEmail: e.target.value})}
+                    placeholder="email@university.edu"
+                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-4 py-3 font-inter text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
+                  />
+                  <p className="font-inter text-[11px] text-on-surface-variant mt-1">Please use this exact email when you register.</p>
                 </div>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <label className="font-inter text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presentation Type</label>
+                <select 
+                  value={formData.type}
+                  onChange={(e) => setFormData({...formData, type: e.target.value})}
+                  className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-4 py-3 font-inter text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors appearance-none"
+                >
+                  <option value="Oral Presentation">Oral Presentation</option>
+                  <option value="Poster Presentation">Poster Presentation</option>
+                </select>
               </div>
 
               <div className="space-y-2 pt-2">
