@@ -1,5 +1,5 @@
 "use client";
-
+export const runtime = 'edge';
 import { useState, useEffect } from "react";
 import LoginScreen from "./components/LoginScreen";
 import AdminSidebar from "./components/AdminSidebar";
