@@ -37,7 +37,7 @@ export default function Home() {
     <main className="flex flex-col w-full min-h-screen">
       
       {/* 1. HERO SECTION */}
-      <section className="relative w-full min-h-[90vh] flex justify-center bg-primary-container text-on-primary pt-24 pb-36 px-6 md:px-12 lg:px-24 overflow-hidden">
+      <section className="relative w-full min-h-[90vh] flex justify-center bg-primary-container text-on-primary pt-12 pb-36 px-6 md:px-12 lg:px-24 overflow-hidden">
         
         {/* Background Image with Navy Overlay */}
         <div className="absolute inset-0 z-0">
@@ -53,12 +53,12 @@ export default function Home() {
         </div>
 
         <motion.div 
-          className="relative z-10 max-w-[1280px] mx-auto flex flex-col items-center text-center gap-6 mt-6"
+          className="relative z-10 max-w-[1280px] mx-auto flex flex-col items-center text-center gap-6"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/40 text-secondary-container text-xs font-semibold tracking-widest uppercase mb-2 backdrop-blur-sm">
+          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/40 text-secondary-container text-xl font-semibold tracking-widest uppercase mb-2 backdrop-blur-sm">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             November 2 - 3, 2026
           </motion.div>
@@ -76,18 +76,15 @@ export default function Home() {
             Council Hall, Tezpur University, Assam, India
           </motion.div>
 
-          {/* <motion.div variants={fadeUp} className="flex flex-col items-center gap-1 mt-4 p-5 md:p-6 rounded-2xl bg-secondary/10 border border-secondary/20 backdrop-blur-sm max-w-3xl">
+          <motion.div variants={fadeUp} className="flex flex-col items-center gap-1 mt-4 p-4 md:p-6 rounded-2xl bg-secondary/10 border border-secondary/20 backdrop-blur-sm max-w-3xl">
             <p className="text-[10px] md:text-xs font-bold tracking-widest text-secondary-container uppercase">Organised By</p>
             <h2 className="text-sm md:text-lg font-bold text-on-primary text-center">
               Dept. of Molecular Biology and Biotechnology<br/>
               <span className="font-normal text-inverse-primary">Tezpur University, Assam, India</span>
             </h2>
-            <div className="w-12 h-px bg-secondary/30 my-2" />
-            <p className="text-[10px] md:text-xs font-bold tracking-widest text-secondary-container uppercase">Convenor & Organizing Secretary</p>
-            <p className="text-sm md:text-base font-medium text-on-primary">Prof. Anand Shankar Ramteke</p>
-          </motion.div> */}
+          </motion.div>
 
-          <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 mt-6">
+          {/* <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 mt-6">
             <motion.div {...springInteraction}>
               <Link href="/registration" className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-secondary text-on-secondary font-inter font-medium transition-colors hover:bg-secondary-container hover:text-on-secondary-container shadow-lg shadow-secondary/20">
                 <span>Register Now</span>
@@ -99,7 +96,7 @@ export default function Home() {
                 Submit Abstract
               </Link>
             </motion.div>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
 
        {/* Marquee - In Association With */}
@@ -122,7 +119,7 @@ export default function Home() {
                 }}
               >
                 {/* FIX 1: Replaced w-full with explicit dimensions (w-48 h-16) */}
-                <div className="relative w-auto h-20 flex items-center justify-center">
+                <div className="relative w-auto h-30 flex items-center justify-center">
                   
                   {/* FIX 2: Commented out the text so it doesn't show behind transparent images */}
                   {/* <span className="font-bold text-sm md:text-base text-inverse-primary absolute z-0 whitespace-nowrap">
