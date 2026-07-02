@@ -1,5 +1,5 @@
 // src/app/api/status/route.ts
-export const runtime = 'edge';
+
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 

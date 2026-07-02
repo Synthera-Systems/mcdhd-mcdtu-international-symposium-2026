@@ -1,5 +1,5 @@
 // src/app/api/engine/ai_worker/route.ts
-export const runtime = 'edge';
+
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";

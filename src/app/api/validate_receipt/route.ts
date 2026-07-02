@@ -1,5 +1,5 @@
 // src/app/api/validate-receipt/route.ts
-export const runtime = 'edge';
+
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
