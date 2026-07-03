@@ -1,5 +1,5 @@
-import { defineConfig } from "@opennextjs/cloudflare";
+import { defineCloudflareConfig } from "@opennextjs/cloudflare";
 
-export default defineConfig({
-  /* You can add custom configuration adjustments here if needed */
+export default defineCloudflareConfig({
+  // Your Cloudflare configurations go here
 });
