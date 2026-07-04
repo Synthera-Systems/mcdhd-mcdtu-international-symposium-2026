@@ -42,6 +42,9 @@ const speakersData = [
   { name: "Prof. C.V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/cv-rao.png" },
   // { name: "Prof. Natasha Kyprianou", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/natasha-kyprianou.png" },
   { name: "Prof. R. P. Singh", affiliation: "Gautam Budha University, Noida, India", image: "/speakers/rp-singh.png" },
+  { name: "Prof. Sujit Basu", affiliation: "Ohio State University, USA", image: "/speakers/sujit-basu.png" },
+  { name: "Prof. Gokul Das", affiliation: "Roswell Park Comprehensive Cancer Center, USA", image: "/speakers/gokul.png" },
+  { name: "Dr. Chandrani Sarkar", affiliation: "Mitchell Cancer Institute, USA", image: "/speakers/chandrani-sarkar.png" },
   { name: "Prof. Pankaj Singh", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/pankaj-singh.png" },
   // { name: "Prof. Doris Germain", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/doris-germain.png" },
   // { name: "Prof. Yidong Bai", affiliation: "University of Texas San Antonio, Texas, USA", image: "/speakers/yidong-bai.png" },
@@ -63,27 +66,27 @@ const speakersData = [
 
 export default function SpeakersPage() {
   return (
-    <div className="w-full min-h-screen bg-surface pt-12 pb-24 px-6 md:px-12 lg:px-24">
+    <div className="w-full min-h-screen bg-surface pt-8 sm:pt-12 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 lg:px-24">
       
       {/* Header Section */}
       <motion.div 
-        className="max-w-[1280px] mx-auto mb-16"
+        className="max-w-[1280px] mx-auto mb-10 sm:mb-16"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
       >
-        <motion.div variants={fadeUp} className="w-12 h-1 bg-secondary mb-6" />
-        <motion.h1 variants={fadeUp} className="text-4xl md:text-6xl font-playfair font-bold text-primary mb-6">
+        <motion.div variants={fadeUp} className="w-10 sm:w-12 h-1 bg-secondary mb-4 sm:mb-6" />
+        <motion.h1 variants={fadeUp} className="text-3xl sm:text-4xl md:text-6xl font-playfair font-bold text-primary mb-3 sm:mb-6 leading-tight">
           Distinguished Speakers
         </motion.h1>
-        <motion.p variants={fadeUp} className="text-lg font-inter text-on-surface-variant max-w-3xl leading-relaxed">
+        <motion.p variants={fadeUp} className="text-sm sm:text-base md:text-lg font-inter text-on-surface-variant max-w-3xl leading-relaxed">
           The MCDHD/MCDTU 2026 brings together a global consortium of leading minds in oncology, mitochondrial dynamics, and cellular therapeutics.
         </motion.p>
       </motion.div>
 
       {/* Roster Grid */}
       <motion.div 
-        className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+        className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}
@@ -99,7 +102,7 @@ export default function SpeakersPage() {
             <div className="aspect-[4/5] w-full relative bg-primary-container overflow-hidden group">
               {/* 1. Fallback Background & Initials */}
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-container to-primary">
-                <span className="font-playfair text-5xl font-semibold text-white/20 tracking-widest">
+                <span className="font-playfair text-4xl sm:text-5xl font-semibold text-white/20 tracking-widest">
                   {getInitials(speaker.name)}
                 </span>
               </div>
@@ -121,14 +124,14 @@ export default function SpeakersPage() {
             </div>
 
             {/* Profile Info */}
-            <div className="p-6 flex flex-col flex-grow bg-white">
-              <h3 className="font-playfair text-lg font-bold text-primary mb-2 leading-tight">
+            <div className="p-4 sm:p-5 md:p-6 flex flex-col flex-grow bg-white">
+              <h3 className="font-playfair text-base sm:text-lg font-bold text-primary mb-1.5 sm:mb-2 leading-tight">
                 {speaker.name}
               </h3>
-              <p className="font-inter text-xs font-medium text-secondary-container uppercase tracking-wide mb-2 line-clamp-1">
+              <p className="font-inter text-[10px] sm:text-xs font-medium text-secondary-container uppercase tracking-wide mb-1.5 sm:mb-2 line-clamp-1">
                 {speaker.affiliation.split(',').pop()?.trim() || "USA"}
               </p>
-              <p className="font-inter text-sm text-on-surface-variant leading-snug line-clamp-3">
+              <p className="font-inter text-xs sm:text-sm text-on-surface-variant leading-snug line-clamp-3">
                 {speaker.affiliation}
               </p>
             </div>

@@ -89,7 +89,7 @@ export default function LoginScreen({
         </form>
         <motion.div {...springInteraction}>
           <Link href="/" className="flex items-center gap-2">
-            <span className="cursor-pointer w-full bg-primary/30 mt-4 text-primaryfont-inter font-bold text-lg py-4 rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-70 flex justify-center items-center gap-2 shadow-lg shadow-primary/20">
+            <span className="cursor-pointer w-full bg-primary/30 mt-4 text-primaryfont-inter font-bold text-lg py-4 rounded-xl hover:bg-primary/60 hover:text-gray-100 transition-colors disabled:opacity-70 flex justify-center items-center gap-2 shadow-lg shadow-primary/20">
               Go to the site
             </span>
           </Link>
