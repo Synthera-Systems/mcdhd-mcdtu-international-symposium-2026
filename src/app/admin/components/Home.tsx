@@ -71,7 +71,7 @@ export default function Home({ adminUser, setActiveTab }: { adminUser: any, setA
             Welcome back, {adminUser?.name?.split(' ')[0] || 'Administrator'}
           </h2>
           <p className="font-inter text-white max-w-xl text-sm leading-relaxed">
-            Here is what's happening with the MCDHD/MCDTU 2026 symposium today. You have <strong className="text-white font-semibold">{stats.pendingPayments} payments</strong> and <strong className="text-white font-semibold">{stats.pendingReviews} abstracts</strong> awaiting your review.
+            Here is what's happening with the MitoCan-Symposium 2026 today. You have <strong className="text-white font-semibold">{stats.pendingPayments} payments</strong> and <strong className="text-white font-semibold">{stats.pendingReviews} abstracts</strong> awaiting your review.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <button 

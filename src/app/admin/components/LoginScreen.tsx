@@ -37,7 +37,7 @@ export default function LoginScreen({
             Admin Panel
           </h1>
           <h2 className="font-playfair text-xl font-bold text-primary mb-2 tracking-tight">
-            MCDHD/MCDTU 2026
+            MitoCan-Symposium 2026
           </h2>
           <p className="font-inter text-sm text-on-surface-variant">
             Symposium Management System

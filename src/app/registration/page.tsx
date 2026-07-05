@@ -29,7 +29,8 @@ export default function RegistrationPage() {
     email: "", 
     utrNumber: "",
     participationType: "GENERAL_ATTENDEE",
-    linkedAbstractId: ""
+    linkedAbstractId: "",
+    studentLevel: ""
   });
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   
@@ -43,10 +44,35 @@ export default function RegistrationPage() {
   const formRef = useRef<HTMLDivElement>(null);
 
   const pricingTiers = [
-    { id: "Student", label: "Scholars", title: "Student", price: "Rs. 3000", features: ["Access to all sessions", "Conference Kit", "Digital Certificates"] },
-    { id: "Faculty", label: "Academia", title: "Faculty", price: "Rs. 5000", features: ["All session access", "Networking dinner", "Delegate materials"], popular: true },
-    { id: "Industry", label: "Professional", title: "Industry", price: "Rs. 10000", features: ["B2B Networking", "Booth visitation", "Priority seating"] },
-    { id: "Foreign", label: "International", title: "Foreign", price: "Rs. 30000", features: ["Concierge support", "Airport transfer", "Premium access"] }
+    { 
+      id: "Student", 
+      label: "Scholars", 
+      title: "Student", 
+      price: "Rs. 3000", 
+      features: ["Eligibility for oral/poster presentations", "Access to peer-reviewed scientific sessions", "Official participation validation"] 
+    },
+    { 
+      id: "Faculty", 
+      label: "Academia", 
+      title: "Faculty", 
+      price: "Rs. 5000", 
+      features: ["Eligibility for oral/poster presentations", "Access to peer-reviewed scientific sessions", "Official participation validation"], 
+      popular: true 
+    },
+    { 
+      id: "Industry", 
+      label: "Professional", 
+      title: "Industry", 
+      price: "Rs. 10000", 
+      features: ["Eligibility for oral/poster presentations", "Access to peer-reviewed scientific sessions", "Official participation validation"] 
+    },
+    { 
+      id: "Foreign", 
+      label: "International", 
+      title: "Foreign", 
+      price: "Rs. 30000", 
+      features: ["Eligibility for oral/poster presentations", "Access to peer-reviewed scientific sessions", "Official participation validation"] 
+    }
   ];
 
   // Auto-scroll to top when the success screen renders
@@ -101,6 +127,11 @@ export default function RegistrationPage() {
       return;
     }
 
+    if (selectedTier === "Student" && !formData.studentLevel) {
+      setError("Please select your academic level (MSc, PhD, or RA/PostDoc).");
+      return;
+    }
+
     try {
       setLoadingStep("Securing Application...");
       const fileExt = receiptFile.name.split('.').pop();
@@ -116,12 +147,16 @@ export default function RegistrationPage() {
         .from('receipts')
         .getPublicUrl(fileName);
 
+      const dbCategory = selectedTier === "Student" 
+        ? `Student - ${formData.studentLevel}` 
+        : selectedTier;
+
       const registerRes = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          category: selectedTier,
+          category: dbCategory,
           screenshotUrl: publicUrlData.publicUrl,
         })
       });
@@ -228,7 +263,7 @@ export default function RegistrationPage() {
           Delegate Registration
         </motion.h1>
         <motion.p variants={fadeUp} className="text-sm sm:text-base md:text-lg font-inter text-on-surface-variant max-w-2xl mx-auto leading-relaxed">
-          Secure your place at the International Symposium on Mitochondria, Cell Death, and Human Disease. Access world-class research and institutional excellence.
+          Secure your place at the International Symposium on Mitochondria, Cancer and Human Diseases. Access world-class research and institutional excellence.
         </motion.p>
       </motion.div>
 
@@ -339,6 +374,50 @@ export default function RegistrationPage() {
 
                 <hr className="border-surface-dim/30" />
 
+                {/* --- NEW: Student Academic Level Section --- */}
+                <AnimatePresence mode="wait">
+                  {selectedTier === "Student" && (
+                    <motion.div 
+                      key="student-level-selection"
+                      initial={{ opacity: 0, height: 0, y: -10 }} 
+                      animate={{ opacity: 1, height: "auto", y: 0 }} 
+                      exit={{ opacity: 0, height: 0, y: -10 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="space-y-4 sm:space-y-6 pb-6 sm:pb-8">
+                        <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">
+                          Academic Level
+                        </label>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+                          {[
+                            { id: "MSc", label: "MSc Student" },
+                            { id: "PhD", label: "PhD Scholar" },
+                            { id: "RA/PostDoc", label: "RA / PostDoc" }
+                          ].map((level) => (
+                            <div 
+                              key={level.id}
+                              onClick={() => setFormData({...formData, studentLevel: level.id})}
+                              className={`p-3 sm:p-4 rounded-xl border cursor-pointer transition-all ${
+                                formData.studentLevel === level.id 
+                                  ? "border-secondary bg-secondary/5 ring-1 ring-secondary shadow-sm" 
+                                  : "border-surface-dim/50 hover:border-secondary/30 bg-surface-bright"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 sm:gap-3">
+                                <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border flex items-center justify-center shrink-0 ${formData.studentLevel === level.id ? "border-secondary" : "border-surface-dim"}`}>
+                                  {formData.studentLevel === level.id && <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-secondary" />}
+                                </div>
+                                <p className={`font-inter text-xs sm:text-sm font-bold ${formData.studentLevel === level.id ? "text-secondary" : "text-primary"}`}>{level.label}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <hr className="border-surface-dim/30" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <div className="space-y-4 sm:space-y-6">
                   <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">
                     Participation Role
@@ -408,7 +487,7 @@ export default function RegistrationPage() {
                           </div>
                           <div>
                             <p className="font-inter text-xs sm:text-sm font-bold text-primary mb-1">Planning to submit an abstract later?</p>
-                            <p className="font-inter text-[10px] sm:text-xs text-secondary-container leading-relaxed">
+                            <p className="font-inter text-[10px] sm:text-xs text-secondary leading-relaxed">
                               You can secure your registration as a General Attendee now. When you submit your research in the <Link href="/submissions" className="underline font-medium hover:text-secondary">Submissions tab</Link>, just ensure you use the same email address <span className="font-mono font-bold bg-white px-1 py-0.5 rounded text-[9px] sm:text-[10px]">{formData.email || ''}</span>so we can automatically link them.
                             </p>
                           </div>
@@ -419,6 +498,40 @@ export default function RegistrationPage() {
                 </div>
 
                 <hr className="border-surface-dim/30" />
+
+                <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-6 sm:mb-8">
+                <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-6 sm:mb-8">Institutional Bank Details</h3>
+                <div className="bg-surface-bright rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-surface-dim/50 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+                    <div className="w-full space-y-4 sm:space-y-6 text-left flex-grow">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                          <div>
+                            <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Account Name</p>
+                            <p className="font-inter text-sm sm:text-lg text-primary font-medium">MitoCan-Symposium 2026</p>
+                          </div>
+                          <div>
+                            <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Bank Name</p>
+                            <p className="font-inter text-sm sm:text-lg text-primary font-medium">State Bank of India</p>
+                          </div>
+                          <div>
+                            <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Account Number</p>
+                            <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">98765432101</p>
+                          </div>
+                          <div>
+                            <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">IFSC Code</p>
+                            <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">SBIN0001234</p>
+                          </div>
+                      </div>
+                    </div>
+                    <div className="w-full md:w-auto flex flex-col items-center gap-2 sm:gap-3 pt-6 md:pt-0 md:pl-8 border-t md:border-t-0 md:border-l border-surface-dim/50 shrink-0">
+                      <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl shadow-md border border-surface-dim/30 p-2 flex items-center justify-center relative overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-br from-primary-container to-primary m-1.5 sm:m-2 rounded flex items-center justify-center">
+                            <svg className="w-8 h-8 sm:w-12 sm:h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                          </div>
+                      </div>
+                      <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Scan for UPI Payment</p>
+                    </div>
+                </div>
+              </motion.div>
 
                 <div>
                    <h3 className="font-playfair text-lg sm:text-xl font-bold text-primary mb-4 sm:mb-6 flex items-center gap-2 sm:gap-3">
@@ -498,41 +611,9 @@ export default function RegistrationPage() {
         )}
       </AnimatePresence>
 
-      {selectedTier && (
-        <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mt-12 sm:mt-20 mb-6 sm:mb-8">
-          <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-6 sm:mb-8">Institutional Bank Details</h3>
-          <div className="bg-surface-bright rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-surface-dim/50 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
-              <div className="w-full space-y-4 sm:space-y-6 text-left flex-grow">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                    <div>
-                      <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Account Name</p>
-                      <p className="font-inter text-sm sm:text-lg text-primary font-medium">MCDHD Conference 2026</p>
-                    </div>
-                    <div>
-                      <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Bank Name</p>
-                      <p className="font-inter text-sm sm:text-lg text-primary font-medium">State Bank of India</p>
-                    </div>
-                    <div>
-                      <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Account Number</p>
-                      <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">98765432101</p>
-                    </div>
-                    <div>
-                      <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">IFSC Code</p>
-                      <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">SBIN0001234</p>
-                    </div>
-                </div>
-              </div>
-              <div className="w-full md:w-auto flex flex-col items-center gap-2 sm:gap-3 pt-6 md:pt-0 md:pl-8 border-t md:border-t-0 md:border-l border-surface-dim/50 shrink-0">
-                <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl shadow-md border border-surface-dim/30 p-2 flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-container to-primary m-1.5 sm:m-2 rounded flex items-center justify-center">
-                      <svg className="w-8 h-8 sm:w-12 sm:h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
-                    </div>
-                </div>
-                <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Scan for UPI Payment</p>
-              </div>
-          </div>
-        </motion.div>
-      )}
+      {/* {selectedTier && (
+        
+      )} */}
 
     </div>
   );

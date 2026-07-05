@@ -122,7 +122,7 @@ export default function SponsorsPage() {
             </ul>
 
             <motion.a 
-              href="mailto:mitocanSypm2026@gmail.com?subject=Sponsorship Inquiry: MCDHD 2026"
+              href="mailto:mitocanSypm2026@gmail.com?subject=Sponsorship Inquiry: MitoCan-Symposium 2026"
               {...springInteraction}
               className={`w-full py-3 sm:py-3.5 rounded-xl font-inter flex items-center justify-center gap-2 cursor-pointer text-xs sm:text-sm font-bold transition-all ${
                 tier.popular 

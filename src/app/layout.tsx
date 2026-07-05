@@ -21,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MCDHD 2026 | MCDTU 2026",
+  title: "MitoCan-Symposium 2026",
   description: "International Symposium on Mitochondria, Cell Death, and Human Disease: Recent Advances in Cancer Research and Clinical Translation. November 2 - 3, 2026.",
 };
 

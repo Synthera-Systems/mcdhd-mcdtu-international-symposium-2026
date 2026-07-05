@@ -50,8 +50,8 @@ export default function Navbar() {
           </div>
           {/* Brand */}
           <motion.div {...springInteraction}>
-              <span className="font-playfair font-bold text-[13px] sm:text-lg md:text-xl tracking-tight text-primary leading-none block max-w-[120px] sm:max-w-none whitespace-normal sm:whitespace-nowrap">
-                MCDHD/MCDTU <br className="block sm:hidden" /> 2026
+              <span className="font-playfair font-bold text-[13px] sm:text-lg md:text-xl tracking-tight text-primary leading-none block max-w-60 sm:max-w-none whitespace-normal sm:whitespace-nowrap">
+                MitoCan-Symposium <br className="block sm:hidden" /> 2026
               </span>
           </motion.div>
           </Link>

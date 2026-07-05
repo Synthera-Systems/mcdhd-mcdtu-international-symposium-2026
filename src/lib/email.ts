@@ -19,9 +19,9 @@ const transporter = nodemailer.createTransport({
  */
 export const sendRegistrationReceivedEmail = async (toEmail: string, fullName: string, referenceId: string) => {
   const mailOptions = {
-    from: `"MCDHD/MCDTU 2026" <${process.env.EMAIL_USER}>`,
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Application Received - MCDHD/MCDTU 2026",
+    subject: "Application Received - MitoCan-Symposium 2026",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Application Received</h2>
@@ -52,14 +52,14 @@ export const sendRegistrationReceivedEmail = async (toEmail: string, fullName: s
 
 export const sendRegistrationVerifiedEmail = async (toEmail: string, fullName: string, referenceId: string) => {
   const mailOptions = {
-    from: `"MCDHD/MCDTU 2026" <${process.env.EMAIL_USER}>`,
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
     subject: "Payment Verified - Awaiting Final Approval",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Verified</h2>
         <p style="font-size: 16px;">Dear ${fullName},</p>
-        <p style="font-size: 16px; line-height: 1.5;">Great news! Our automated system has successfully verified your payment receipt for the MCDHD/MCDTU 2026 symposium.</p>
+        <p style="font-size: 16px; line-height: 1.5;">Great news! Our automated system has successfully verified your payment receipt for the MitoCan-Symposium 2026.</p>
         <p style="font-size: 16px; line-height: 1.5;">Your application is now marked as <strong>Pending Final Approval</strong>. The organizing committee will do a final review and issue your official delegate pass shortly.</p>
         
         <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 25px 0;">
@@ -82,14 +82,14 @@ export const sendActionRequiredEmail = async (toEmail: string, fullName: string,
   const actionLink = `${baseUrl}/action/${actionToken}`;
 
   const mailOptions = {
-    from: `"MCDHD/MCDTU 2026" <${process.env.EMAIL_USER}>`,
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
     subject: "Action Required: Payment Verification Failed",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Action Required</h2>
         <p style="font-size: 16px;">Dear ${fullName},</p>
-        <p style="font-size: 16px; line-height: 1.5;">We encountered an issue while verifying your payment receipt for the MCDHD/MCDTU 2026 symposium.</p>
+        <p style="font-size: 16px; line-height: 1.5;">We encountered an issue while verifying your payment receipt for the MitoCan-Symposium 2026.</p>
         
         <div style="background-color: #fff1f2; border-left: 4px solid #e11d48; padding: 15px; margin: 25px 0;">
           <p style="margin: 0; font-size: 14px; color: #9f1239;"><strong>Reason for failure:</strong></p>
@@ -117,9 +117,9 @@ export const sendActionRequiredEmail = async (toEmail: string, fullName: string,
 
 export const sendAbstractReceivedEmail = async (toEmail: string, title: string, referenceId: string) => {
   const mailOptions = {
-    from: `"MCDHD/MCDTU 2026" <${process.env.EMAIL_USER}>`,
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Abstract Submission Received - MCDHD/MCDTU 2026",
+    subject: "Abstract Submission Received - MitoCan-Symposium 2026",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Abstract Received</h2>
@@ -148,9 +148,9 @@ export const sendAbstractAcceptedEmail = async (toEmail: string, title: string, 
   const registerLink = `${baseUrl}/registration`;
 
   const mailOptions = {
-    from: `"MCDHD/MCDTU 2026" <${process.env.EMAIL_USER}>`,
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Abstract Accepted! Action Required - MCDHD/MCDTU 2026",
+    subject: "Abstract Accepted! Action Required - MitoCan-Symposium 2026",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #166534; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Abstract Accepted</h2>
@@ -185,9 +185,9 @@ export const sendAbstractRejectedEmail = async (toEmail: string, title: string) 
   const registerLink = `${baseUrl}/registration`;
 
   const mailOptions = {
-    from: `"MCDHD/MCDTU 2026" <${process.env.EMAIL_USER}>`,
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Update on your Abstract Submission - MCDHD/MCDTU 2026",
+    subject: "Update on your Abstract Submission - MitoCan-Symposium 2026",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Submission Update</h2>

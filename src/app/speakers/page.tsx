@@ -38,17 +38,23 @@ const speakersData = [
   { name: "Prof. Raymond B. Birge", affiliation: "Rutgers School of Biomedical and Health Sciences, Newark, USA", image: "/speakers/raymond-birge.png" },
   { name: "Prof. Dhyan Chandra", affiliation: "Roswell Park Comprehensive Cancer Center, New York, USA", image: "/speakers/dhyan-chandra.png" },
   { name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/jerry-chipuk.png" },
+  { name: "Prof. Gokul Das", affiliation: "Roswell Park Comprehensive Cancer Center, USA", image: "/speakers/gokul.png" },
+  { name: "Prof. Ajay Singh", affiliation: "Mitchell Cancer Institute, Alabama, USA", image: "/speakers/ajay.png" },
   { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, Denver, USA", image: "/speakers/rajesh-agarwal.png" },
   { name: "Prof. C.V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/cv-rao.png" },
   // { name: "Prof. Natasha Kyprianou", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/natasha-kyprianou.png" },
-  { name: "Prof. R. P. Singh", affiliation: "Gautam Budha University, Noida, India", image: "/speakers/rp-singh.png" },
+  { name: "Prof. R. P. Singh", affiliation: "Gautam Buddha University, Noida, India", image: "/speakers/rp-singh.png" },
   { name: "Prof. Sujit Basu", affiliation: "Ohio State University, USA", image: "/speakers/sujit-basu.png" },
-  { name: "Prof. Gokul Das", affiliation: "Roswell Park Comprehensive Cancer Center, USA", image: "/speakers/gokul.png" },
   { name: "Dr. Chandrani Sarkar", affiliation: "Mitchell Cancer Institute, USA", image: "/speakers/chandrani-sarkar.png" },
   { name: "Prof. Pankaj Singh", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/pankaj-singh.png" },
   // { name: "Prof. Doris Germain", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/doris-germain.png" },
-  // { name: "Prof. Yidong Bai", affiliation: "University of Texas San Antonio, Texas, USA", image: "/speakers/yidong-bai.png" },
+  { name: "Prof. Yidong Bai", affiliation: "University of Texas San Antonio, Texas, USA", image: "/speakers/yidong-bai.png" },
+  { name: "Prof. Paulraj Rajamani", affiliation: "Jawaharlal Nehru University, Delhi, India", image: "/speakers/paulraj.png" },
+  { name: "Prof. Umesh Chand Singh Yadav", affiliation: "Jawaharlal Nehru University, Delhi, India", image: "/speakers/umesh.png" },
+  { name: "Dr. Surendra Kumar Shukla", affiliation: "University of Oklahoma Health Sciences Center (OUHSC), Oklahoma, USA", image: "/speakers/surendra.png" },
+  { name: "Dr. Chandan Goswami", affiliation: "National Institute of Science Education and Research (NISER), Bhubaneswar, India", image: "/speakers/chandan.png" },
   { name: "Prof. Reshma Taneja", affiliation: "National University of Singapore, Singapore", image: "/speakers/reshma-taneja.png" },
+  { name: "Dr. Debanjan Chakroborty", affiliation: "Mitchell Cancer Institute, USA", image: "/speakers/debanjan.png" },
   // { name: "Prof. Huangen Ding", affiliation: "Louisiana State University, USA", image: "/speakers/huangen-ding.png" },
   // { name: "Prof. Ashok Kumar", affiliation: "University of Houston, Houston, USA", image: "/speakers/ashok-kumar.png" },
   // { name: "Prof. David Goodrich", affiliation: "Roswell Park Comprehensive Cancer Center, New York, USA", image: "/speakers/david-goodrich.png" },
@@ -57,7 +63,7 @@ const speakersData = [
   // { name: "Dr. Komal Raina", affiliation: "South Dakota University, USA", image: "/speakers/komal-raina.png" },
   // { name: "Dr. Neera Tiwari Singh", affiliation: "Michigan University, USA", image: "/speakers/neera-singh.png" },
   // { name: "Prof. Sarad Mishra", affiliation: "Deen Dayal Upadhyaya University, Gorakhpur, India", image: "/speakers/sarad-mishra.png" },
-  // { name: "Dr. Dipali Sharma", affiliation: "Johns Hopkins University, Baltimore, USA", image: "/speakers/dipali-sharma.png" },
+  { name: "Dr. Dipali Sharma", affiliation: "Johns Hopkins University, Baltimore, USA", image: "/speakers/dipali-sharma.png" },
   { name: "Dr. Subhrajit Saha", affiliation: "University of Kansas Medical Center, Kansas, USA", image: "/speakers/subhrajit-saha.png" },
   { name: "Dr. Pooja Jadiya", affiliation: "Wake Forest University, Winston-Salem, USA", image: "/speakers/pooja-jadiya.png" },
   // { name: "Dr. Ashok Varma", affiliation: "ACTREC, Navi Mumbai, India", image: "/speakers/ashok-varma.png" },
@@ -80,7 +86,7 @@ export default function SpeakersPage() {
           Distinguished Speakers
         </motion.h1>
         <motion.p variants={fadeUp} className="text-sm sm:text-base md:text-lg font-inter text-on-surface-variant max-w-3xl leading-relaxed">
-          The MCDHD/MCDTU 2026 brings together a global consortium of leading minds in oncology, mitochondrial dynamics, and cellular therapeutics.
+          The Mitocondria Cancer Symposium 2026 brings together a global consortium of leading minds in oncology, mitochondrial dynamics, metabolism, stem cells and cancer therapeutics.
         </motion.p>
       </motion.div>
 

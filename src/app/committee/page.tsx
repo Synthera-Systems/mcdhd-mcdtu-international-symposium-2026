@@ -83,11 +83,11 @@ export default function CommitteePage() {
       className="group flex items-start sm:items-center gap-3 sm:gap-5 bg-white p-4 sm:p-5 rounded-2xl border border-surface-dim/30 shadow-[0_4px_20px_rgba(0,33,71,0.02)] hover:shadow-[0_8px_30px_rgba(0,33,71,0.06)] cursor-default transition-shadow"
     >
       {/* Avatar */}
-      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0 flex items-center justify-center bg-gradient-to-br from-primary-container to-primary overflow-hidden relative">
+      {/* <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full shrink-0 flex items-center justify-center bg-gradient-to-br from-primary-container to-primary overflow-hidden relative">
         <span className="font-playfair text-lg sm:text-xl font-bold text-white/30 tracking-widest">
           {getInitials(member.name)}
         </span>
-      </div>
+      </div> */}
 
       {/* Info */}
       <div className="flex flex-col flex-grow">
@@ -124,7 +124,7 @@ export default function CommitteePage() {
           Committees
         </motion.h1>
         <motion.p variants={fadeUp} className="text-sm sm:text-base md:text-lg font-inter text-on-surface-variant max-w-3xl leading-relaxed">
-          The dedicated teams and esteemed advisors guiding the vision, planning, and execution of the MCDHD/MCDTU 2026 Symposium.
+          The dedicated teams and esteemed advisors guiding the vision, planning, and execution of the Mitocondria Cancer Symposium 2026.
         </motion.p>
       </motion.div>
 

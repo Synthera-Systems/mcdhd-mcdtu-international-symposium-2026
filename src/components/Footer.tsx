@@ -19,7 +19,27 @@ export default function Footer() {
           
           {/* Brand & Mission (Takes up more space) */}
           <div className="sm:col-span-2 md:col-span-5 space-y-4 sm:space-y-6 pr-0 md:pr-12 text-center sm:text-left flex flex-col items-center sm:items-start">
-            <h3 className="font-playfair font-bold text-2xl sm:text-3xl text-white tracking-tight">MCDHD/MCDTU 2026</h3>
+            <div className="flex gap-3 justify-center md:justify-start">
+              <div className="relative w-12 h-12 sm:w-10 sm:h-10 md:w-20 md:h-20 rounded-full overflow-hidden shrink-0 bg-surface-bright shadow-inner">
+                <Image 
+                  src='/logos/TU.png'
+                  alt='Tezu' 
+                  fill 
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                /> 
+              </div>
+              <div className="relative w-12 h-12 sm:w-10 sm:h-10 md:w-20 md:h-20 rounded-full overflow-hidden shrink-0 bg-surface-bright shadow-inner">
+                <Image 
+                  src='/logos/JNUN.png'
+                  alt='JNUN' 
+                  fill 
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                /> 
+              </div>
+            </div>
+            <h3 className="font-playfair font-bold text-2xl sm:text-3xl text-white tracking-tight">MitoCan-Symposium 2026</h3>
             <p className="font-inter text-xs sm:text-sm leading-relaxed text-[#A0A0A0] max-w-sm">
               Empowering scientific discovery through international collaboration and mitochondrial excellence.
             </p>
@@ -54,7 +74,7 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2 pt-1 sm:pt-2">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-container shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                November 2 - 3, 2026
+                October 26 - 27, 2026
               </p>
             </div>
           </div>

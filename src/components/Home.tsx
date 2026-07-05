@@ -58,8 +58,8 @@ export default function Home() {
           animate="visible"
           variants={staggerContainer}
         >
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/40 text-secondary-container text-xs sm:text-sm md:text-lg font-semibold tracking-widest uppercase mb-1 sm:mb-2 backdrop-blur-sm">
-            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/80 text-on-primary text-lg sm:text-sm md:text-xl font-semibold tracking-widest uppercase mb-1 sm:mb-2 backdrop-blur-sm">
+          <svg className="w-4 h-4 sm:w-5 sm:h-5 overflow-visible" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" className="fill-blue-400 animate-ping origin-center"/><circle cx="12" cy="12" r="6" className="fill-blue-500"/></svg>            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             October 26 - 27, 2026
           </motion.div>
           
@@ -67,20 +67,20 @@ export default function Home() {
             International Symposium on Mitochondria, Cell Death, and Human Disease
           </motion.h1>
           
-          <motion.p variants={fadeUp} className="text-base sm:text-lg md:text-2xl text-inverse-primary font-playfair italic max-w-3xl px-2">
+          <motion.p variants={fadeUp} className="text-xl sm:text-lg md:text-3xl text-on-primary font-playfair italic max-w-4xl font-semibold px-2">
             Recent Advances in Cancer Research and Clinical Translation
           </motion.p>
 
-          <motion.div variants={fadeUp} className="flex flex-wrap justify-center items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/40 text-secondary-container font-inter font-black mt-1 text-xs sm:text-sm md:text-xl text-center">
+          <motion.div variants={fadeUp} className="flex flex-wrap justify-center items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/80 text-on-primary font-inter font-bold mt-1 text-sm sm:text-sm md:text-2xl text-center">
             <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
             Council Hall, Tezpur University, Assam, India
           </motion.div>
 
-          <motion.div variants={fadeUp} className="flex flex-col items-center gap-1 mt-3 sm:mt-4 p-3 sm:p-4 md:p-6 rounded-2xl bg-secondary/10 border border-secondary/20 backdrop-blur-sm max-w-3xl w-[90%] sm:w-auto">
-            <p className="text-[9px] sm:text-[10px] md:text-xs font-bold tracking-widest text-secondary-container uppercase text-center">Organised By</p>
-            <h2 className="text-xs sm:text-sm md:text-lg font-bold text-on-primary text-center leading-snug">
+          <motion.div variants={fadeUp} className="flex flex-col items-center gap-1 mt-3 sm:mt-4 p-3 sm:p-4 md:p-6 rounded-2xl bg-secondary/10 border border-secondary/80 backdrop-blur-sm max-w-3xl w-[90%] sm:w-auto">
+            <p className="text-sm sm:text-[10px] md:text-lg font-bold tracking-widest text-secondary-container uppercase text-center">Organised By</p>
+            <h2 className="text-lg sm:text-sm md:text-2xl font-bold text-on-primary text-center leading-snug">
               Dept. of Molecular Biology and Biotechnology<br/>
-              <span className="font-normal text-inverse-primary block mt-0.5">Tezpur University, Assam, India</span>
+              <span className="font-semibold text-on-primary block mt-0.5 text-lg sm:text-sm md:text-2xl">Tezpur University, Assam, India</span>
             </h2>
           </motion.div>
         </motion.div>
@@ -88,7 +88,7 @@ export default function Home() {
        {/* Marquee - In Association With */}
        <div className="absolute bottom-0 left-0 w-full border-t border-secondary/20 bg-primary-container/50 backdrop-blur-md pt-3 sm:pt-4 pb-3 sm:pb-4 overflow-hidden z-20">
           <div className="max-w-[1280px] mx-auto px-4 sm:px-6 mb-2 sm:mb-3">
-            <p className="text-center text-[9px] sm:text-[10px] font-bold tracking-widest text-secondary-container uppercase">In Association With</p>
+            <p className="text-center text-sm sm:text-lg font-bold tracking-widest text-secondary-container uppercase">In Association With</p>
           </div>
           
           <div className="relative flex overflow-hidden w-full h-16 sm:h-24 md:h-36 items-center">
@@ -130,10 +130,10 @@ export default function Home() {
               Fostering Global Collaboration in Oncology & Mitochondrial Biology
             </motion.h2>
             <motion.p variants={fadeUp} className="text-sm sm:text-base md:text-lg font-inter text-on-surface-variant leading-relaxed">
-              The MCDHD/MCDTU 2026 serves as a premier multidisciplinary platform for world-renowned scientists, clinical researchers, and young investigators to converge and discuss the pivotal role of mitochondria in human health and disease. 
+              The Mitochondria Cancer Symposium 2026 serves as a premier multidisciplinary platform for world-renowned scientists, clinical researchers, and young investigators to converge and discuss the pivotal role of mitochondria in human health and disease. 
             </motion.p>
             <motion.p variants={fadeUp} className="text-sm sm:text-base md:text-lg font-inter text-on-surface-variant leading-relaxed">
-              With a specific focus on mitochondria and cancer, this symposium facilitates international collaboration, sparking dialogues that lead to innovative therapeutic strategies. By bringing together diverse perspectives from Tezpur to New Jersey, we aim to unravel the complexities of cell death pathways and metabolic reprogramming in cancer cells.
+              With a specific focus on mitochondria and cancer, this symposium facilitates international collaboration, sparking dialogues that lead to innovative therapeutic strategies. By bringing together diverse perspectives, we aim to unravel the complexities of cell death pathways and metabolic reprogramming in cancer cells.
             </motion.p>
           </div>
           <motion.div variants={fadeUp} className="bg-primary-container rounded-3xl p-6 sm:p-10 aspect-square md:aspect-video lg:aspect-square flex flex-col justify-end relative overflow-hidden shadow-2xl group w-full max-w-[500px] mx-auto lg:max-w-none">
@@ -178,22 +178,47 @@ export default function Home() {
             <div className="w-12 sm:w-16 h-1 bg-secondary mx-auto rounded-full" />
           </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 sm:gap-8 w-full">
             {[
               { 
-                title: "Mitochondrial Dynamics", 
-                desc: "Exploring organelle fusion, fission, and trafficking mechanisms and their implications in cellular homeostasis and metabolic diseases.",
-                icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                title: "Mitochondrial Biology", 
+                desc: "Exploring mitochondrial dynamics, respiration, and metabolism in cellular homeostasis.",
+                icon: "M13 10V3L4 14h7v7l9-11h-7z" // Lightning bolt (Energy/Mitochondria)
               },
               { 
                 title: "Cell Death Pathways", 
-                desc: "Investigating the molecular signatures of apoptosis, ferroptosis, and necroptosis in the context of therapeutic resistance.",
-                icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                desc: "Investigating cell death pathways and their direct applications in cancer therapeutics.",
+                icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" // Shield with check (Therapeutics/Protection)
               },
               { 
-                title: "Cancer Therapeutics", 
-                desc: "Translating bench discoveries into targeted therapies, focusing on drug delivery systems and personalized medicine approaches.",
-                icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                title: "Cancer Targets", 
+                desc: "Identifying novel targets and therapeutic agents to effectively control cancer progression.",
+                icon: "M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" // Crosshair/Target (Novel Targets)
+              },
+              { 
+                title: "Phytochemicals", 
+                desc: "Discovering novel phytochemicals and investigating their roles in active cancer prevention.",
+                icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" // Chemistry Beaker (Phytochemicals)
+              },
+              {
+                title: "Tumor Microenvironment",
+                desc: "Analyzing the tumor microenvironment and its complex impact on cancer therapeutics.",
+                icon: "M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" // 3D Cubes/Cells (Microenvironment structure)
+              },
+              {
+                title: "Biomarkers & Metabolome",
+                desc: "Identifying novel biomarkers and mapping the cancer metabolome for early detection.",
+                icon: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" // Clipboard with check (Data/Biomarkers)
+              },
+              {
+                title: "Stem Cells",
+                desc: "Understanding stem cells and overcoming critical challenges in cancer therapy resistance.",
+                icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" // Refresh/Cycle (Stem cell renewal/resistance)
+              },
+              {
+                title: "Nano Systems & Delivery",
+                desc: "Advancing nano systems and targeted drug delivery mechanisms in cancer treatment.",
+                icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" // Package/Box (Drug Delivery)
               }
             ].map((theme, idx) => (
               <motion.div 
@@ -214,7 +239,7 @@ export default function Home() {
       </section>
 
       {/* 4. ORGANIZING COMMITTEE SECTION */}
-      <section className="w-full py-16 sm:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface">
+      <section className="w-full py-16 sm:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface justify-center">
         <motion.div 
           className="max-w-[1280px] mx-auto"
           initial="hidden"
@@ -231,9 +256,9 @@ export default function Home() {
           {/* Patrons Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-12">
             {[
-              { role: "Chief Patron", name: "Prof. Amarendra Kr. Das", img: "/convenors/amrendra.png" , title: "Pro Vice Chancellor", org: "Tezpur University" },
-              { role: "Patron", name: "Prof. Ashim Jyoti Thakur", img: "/convenors/ashim.png" , title: "Dean, Academic Affairs", org: "Tezpur University" },
-              { role: "Patron", name: "Prof. Nayandeep Deka Baruah", img: "/convenors/nayandeep.png" , title: "Dean, School of Sciences", org: "Tezpur University" }
+              { role: "Chief Patron", name: "Prof. Amarendra Kr. Das", img: "/convenors/amrendra.png" , title: "Pro Vice Chancellor", org: "Tezpur University", badgeDesign:"bg-secondary/20 border border-secondary/80 px-3 sm:px-4 py-1.5 rounded-full mb-2" },
+              { role: "Patron", name: "Prof. Ashim Jyoti Thakur", img: "/convenors/ashim.png" , title: "Dean, Academic Affairs", org: "Tezpur University", badgeDesign:"" },
+              { role: "Patron", name: "Prof. Nayandeep Deka Baruah", img: "/convenors/nayandeep.png" , title: "Dean, School of Sciences", org: "Tezpur University", badgeDesign:"" }
             ].map((person, idx) => (
               <motion.div key={idx} variants={fadeUp} className="group bg-surface-bright border border-surface-dim/30 p-6 sm:p-8 rounded-2xl flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow">
                 <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-secondary uppercase bg-secondary/10 px-3 py-1 rounded-full mb-4">{person.role}</span>
@@ -249,14 +274,32 @@ export default function Home() {
                 </div>
 
                 <h3 className="text-base sm:text-lg font-playfair font-bold text-primary mb-1">{person.name}</h3>
-                <p className="text-xs sm:text-sm font-medium text-on-surface-variant">{person.title}</p>
+                <p className={`text-xs sm:text-sm font-medium text-on-surface-variant ${person.badgeDesign}`}>{person.title}</p>
                 <p className="text-[10px] sm:text-xs text-secondary mt-1">{person.org}</p>
               </motion.div>
             ))}
           </div>
 
           {/* Convenor Banner */}
-          <motion.div variants={fadeUp} className="group flex flex-col items-center bg-primary text-white rounded-2xl p-6 sm:p-8 mb-12 sm:mb-16 shadow-lg text-center max-w-3xl mx-auto border border-primary-container">
+          <motion.div className="group bg-surface-bright border border-surface-dim/30 p-6 sm:p-8 rounded-2xl flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow max-w-[32.3%] mx-auto mb-10">
+                <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-secondary uppercase bg-secondary/10 px-3 py-1 rounded-full mb-4">Convenor & Organizing Secretary</span>
+                
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 mb-3 sm:mb-4 rounded-full overflow-hidden shrink-0 bg-surface/50 border-2 border-secondary/10 shadow-inner">
+                  <Image 
+                    src='/convenors/ramteke.png'
+                    alt='Prof. Anand Shankar Ramteke' 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  /> 
+                </div>
+
+                <h3 className="text-base sm:text-lg font-playfair font-bold text-primary mb-1">Prof. Anand Shankar Ramteke</h3>
+                <p className="text-xs sm:text-sm font-medium text-on-surface-variant">Professor, MBBT Department</p>
+                <p className="text-[10px] sm:text-xs text-secondary mt-1">Tezpur University</p>
+          </motion.div>
+
+          {/* <motion.div variants={fadeUp} className="group flex flex-col items-center bg-primary text-white rounded-2xl p-6 sm:p-8 mb-12 sm:mb-16 shadow-lg text-center max-w-3xl mx-auto border border-primary-container">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-4 sm:mb-6 rounded-full overflow-hidden shrink-0 bg-surface-bright border-4 border-secondary/20 shadow-inner">
               <Image 
                 src='/convenors/ramteke.png'
@@ -278,7 +321,7 @@ export default function Home() {
                 Tezpur University, Tezpur, India
               </p>
             </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* Co-Convenors Grid */}
           <motion.div variants={fadeUp}>
@@ -287,8 +330,10 @@ export default function Home() {
             {[
                 { name: "Prof. Raymond B. Birge", img: "/convenors/raymond-birge.png" , org: "Rutgers School of Biomedical and Health Sciences", loc: "Newark, USA" },
                 { name: "Prof. Dhyan Chandra", img: "/convenors/dhyan-chandra.png" , org: "Roswell Park Comprehensive Cancer Center", loc: "New York, USA" },
-                { name: "Prof. Paulraj Rajamani", img: "/convenors/paulraj.png" , org: "JNU", loc: "New Delhi, India" },
-                { name: "Prof. S. Dhanalakshmi", img: "/convenors/dhanlakshmi.png" , org: "Gautam Budha University", loc: "Noida, India" },
+                { name: "Prof. Jerry Chipuk", img: "/speakers/jerry-chipuk.png",org: "Icahn School of Medicine Mount Sinai", loc: " New York, USA" },
+                { name: "Prof. Ajay Singh", img: "/speakers/ajay.png", org: "Mitchell Cancer Institute", loc: "Alabama, USA"},
+                { name: "Prof. Paulraj Rajamani", img: "/convenors/paulraj.png" , org: "Jawaharlal Nehru University", loc: "New Delhi, India" },
+                { name: "Prof. S. Dhanalakshmi", img: "/convenors/dhanlakshmi.png" , org: "Gautam Buddha University", loc: "Noida, India" },
                 { name: "Dr. Rajeev Kumar", img: "/convenors/rajeev.png" , org: "Cachar Cancer Hospital and Research Center", loc: "Silchar, India" },
                 { name: "Dr. Ravi Thakur", img: "/convenors/ravi.png" , org: "CHRIST University", loc: "Bengaluru, India" }
               ].map((person, idx) => (
