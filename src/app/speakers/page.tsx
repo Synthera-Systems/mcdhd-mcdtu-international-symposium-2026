@@ -66,7 +66,7 @@ const speakersData = [
   { name: "Dr. Dipali Sharma", affiliation: "Johns Hopkins University, Baltimore, USA", image: "/speakers/dipali-sharma.png" },
   { name: "Dr. Subhrajit Saha", affiliation: "University of Kansas Medical Center, Kansas, USA", image: "/speakers/subhrajit-saha.png" },
   { name: "Dr. Pooja Jadiya", affiliation: "Wake Forest University, Winston-Salem, USA", image: "/speakers/pooja-jadiya.png" },
-  // { name: "Dr. Ashok Varma", affiliation: "ACTREC, Navi Mumbai, India", image: "/speakers/ashok-varma.png" },
+  { name: "Dr. Ashok K Varma", affiliation: "ACTREC, Navi Mumbai, India", image: "/speakers/ashok.png" },
   { name: "Dr. Dhanendra Tomar", affiliation: "Wake Forest University, Winston-Salem, USA", image: "/speakers/dhanendra-tomar.png" }
 ];
 
