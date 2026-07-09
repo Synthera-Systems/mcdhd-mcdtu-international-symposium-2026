@@ -8,11 +8,31 @@ export async function GET() {
     const settings = await prisma.systemSettings.upsert({
       where: { id: 1 },
       update: {},
-      create: {}, 
+      create: {},
     });
-    return NextResponse.json(settings);
+
+    const storageStats: any[] = await prisma.$queryRaw`
+      SELECT COALESCE(SUM((metadata->>'size')::bigint), 0) as total_bytes 
+      FROM storage.objects 
+      WHERE bucket_id IN ('receipts', 'abstracts')
+    `;
+
+    const usedBytes = Number(storageStats[0]?.total_bytes || 0);
+    const maxFreeBytes = 1 * 1024 * 1024 * 1024; // Exactly 1GB in bytes
+    const utilizationRatio = usedBytes / maxFreeBytes;
+    
+    // Flag warning if storage capacity passes 80% threshold
+    const storageWarning = utilizationRatio >= 0.8;
+
+    return NextResponse.json({
+      ...settings,
+      storageWarning,
+      storagePercentage: (utilizationRatio * 100).toFixed(1)
+    });
+
   } catch (error) {
-    return NextResponse.json({ error: "Failed to retrieve configuration settings" }, { status: 500 });
+    console.error("Settings GET Engine Error:", error);
+    return NextResponse.json({ error: "Failed to read configuration parameters" }, { status: 500 });
   }
 }
 

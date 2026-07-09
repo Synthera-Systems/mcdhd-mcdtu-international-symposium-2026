@@ -46,6 +46,8 @@ export default function SystemSettingsView() {
     accountNumber: "",
     ifscCode: "",
     upiQrUrl: "",
+    storageWarning: false,
+    storagePercentage: "0.0"
   });
 
   const [loading, setLoading] = useState(true);
@@ -168,6 +170,18 @@ export default function SystemSettingsView() {
           </button>
         )}
       </div>
+
+      {settings.storageWarning && (
+        <div className="p-4 mb-6 rounded-xl border bg-amber-50 border-amber-300 text-amber-900 font-inter flex gap-3 items-center">
+          <svg className="w-9 h-9 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <p className="text-lg font-bold uppercase tracking-wider">Warning: Storage Allocation Capacity Reached ({settings.storagePercentage}%)</p>
+            <p className="text-sm text-amber-800 mt-0.5">Your cloud storage is approaching maximum capacity limits. Run bulk archiving operations immediately to prevent registration transaction crashes.</p>
+          </div>
+        </div>
+      )}
 
       {message && (
         <div className={`p-4 rounded-xl text-xs font-semibold mb-6 border ${message.type === "success" ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>

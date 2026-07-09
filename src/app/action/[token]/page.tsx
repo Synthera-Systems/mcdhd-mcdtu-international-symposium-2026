@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
+import imageCompression from "browser-image-compression";
 
 export default function ActionRequiredPage() {
   const params = useParams();
@@ -59,13 +60,13 @@ export default function ActionRequiredPage() {
     }
   }, [success, router]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setError(null);
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      setError("File exceeds 2MB limit. Please compress and try again.");
+    if (file.size > 1 * 1024 * 1024) {
+      setError("File exceeds 1MB limit. Please compress and try again.");
       setReceiptFile(null);
       return;
     }
@@ -77,7 +78,19 @@ export default function ActionRequiredPage() {
       return;
     }
 
-    setReceiptFile(file);
+    if (file.type !== "application/pdf") {
+      try {
+        const options = { maxSizeMB: 0.2, maxWidthOrHeight: 1280, useWebWorker: true };
+        const compressedBlob = await imageCompression(file, options);
+        const optimizedFile = new File([compressedBlob], file.name, { type: file.type });
+        setReceiptFile(optimizedFile);
+      } catch (err) {
+        console.error("Compression bypassed:", err);
+        setReceiptFile(file);
+      }
+    } else {
+      setReceiptFile(file);
+    }
   };
 
   const handleResubmit = async () => {

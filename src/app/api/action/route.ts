@@ -2,6 +2,12 @@
 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
+);
 
 // GET: Check if token is valid and fetch the failure reason
 export async function GET(request: Request) {
@@ -46,7 +52,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
     }
 
-    // 1. Find the existing payment
     const payment = await prisma.payment.findUnique({
       where: { actionToken: token },
       include: { delegate: true },
@@ -56,17 +61,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid request." }, { status: 400 });
     }
 
-    // 2. Update the screenshot and reset status to PROCESSING
+    if (payment.screenshotUrl) {
+      const oldPathKey = payment.screenshotUrl.split("/").pop();
+      if (oldPathKey && !oldPathKey.includes("RETRY")) {
+        await supabaseAdmin.storage
+          .from("receipts")
+          .remove([oldPathKey]);
+      }
+    }
+
     await prisma.payment.update({
       where: { actionToken: token },
       data: {
         screenshotUrl: newScreenshotUrl,
         status: "PROCESSING",
-        aiValidationLog: null, // Clear the old error log
+        aiValidationLog: null,
       },
     });
 
-    // 3. Fire the AI Worker again!
     const baseUrl = request.headers.get('origin') || 'http://localhost:3000';
     fetch(`${baseUrl}/api/engine/ai_worker`, {
       method: 'POST',

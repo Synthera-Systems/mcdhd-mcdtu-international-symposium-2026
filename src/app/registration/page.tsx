@@ -4,6 +4,7 @@ import { motion, Variants, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import imageCompression from "browser-image-compression";
 
 const springInteraction = { 
   whileTap: { scale: 0.97 }, 
@@ -125,13 +126,13 @@ export default function RegistrationPage() {
     }, 150);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     setError(null);
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      setError("File exceeds 2MB limit. Please compress and try again.");
+    if (file.size > 1 * 1024 * 1024) {
+      setError("File exceeds 1MB limit. Please compress and try again.");
       setReceiptFile(null);
       return;
     }
@@ -143,7 +144,24 @@ export default function RegistrationPage() {
       return;
     }
 
-    setReceiptFile(file);
+    if (file.type !== "application/pdf") {
+      try {
+        const options = {
+          maxSizeMB: 0.2, // Targets ~200KB max size
+          maxWidthOrHeight: 1280, // Resizes large phone dimensions safely
+          useWebWorker: true
+        };
+        const compressedBlob = await imageCompression(file, options);
+        const compressedFile = new File([compressedBlob], file.name, { type: file.type });
+        setReceiptFile(compressedFile);
+      } catch (compressErr) {
+        console.error("Compression skipped, using original:", compressErr);
+        setReceiptFile(file); 
+      }
+    } else {
+      setReceiptFile(file);
+    }
+
   };
 
   const handleRegistration = async (e: React.FormEvent) => {
@@ -169,7 +187,12 @@ export default function RegistrationPage() {
         .from('receipts')
         .upload(fileName, receiptFile);
 
-      if (uploadError) throw new Error("Failed to upload receipt. Please try again.");
+        if (uploadError) {
+          if (uploadError.message.includes("quota") || uploadError.message.includes("capacity") || uploadError.status === 413) {
+            throw new Error("SERVER_STORAGE_MAXED");
+          }
+          throw new Error("Failed to upload receipt. Please try again.");
+        }
 
       const { data: publicUrlData } = supabase.storage
         .from('receipts')
@@ -200,7 +223,11 @@ export default function RegistrationPage() {
 
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "An unexpected error occurred.");
+      if (err.message === "SERVER_STORAGE_MAXED") {
+        setError("Our primary storage is temporarily at maximum capacity. To secure your submission timeline, you can submit this text form safely right now, and our administrative desk will follow up via email to collect your visual screenshot manual receipt verification.");
+      } else {
+        setError(err.message || "An unexpected error occurred.");
+      }
       setLoadingStep(null);
     }
   };
