@@ -38,8 +38,11 @@ export default function SubmissionsPage() {
     title: "", 
     authors: "", 
     presenterEmail: "",
-    type: "Oral Presentation" 
+    type: "Oral Presentation",
+    registrationRefId: "" 
   });
+  const [isRegistered, setIsRegistered] = useState<boolean | null>(null);
+
   const [abstractFile, setAbstractFile] = useState<File | null>(null);
   
   // --- UI State ---
@@ -327,120 +330,220 @@ export default function SubmissionsPage() {
           <div className="bg-white p-5 sm:p-8 md:p-10 rounded-2xl sm:rounded-3xl border border-surface-dim/30 shadow-[0_8px_30px_rgba(0,33,71,0.06)]">
             <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-6 sm:mb-8">Submit Your Abstract</h2>
             
-            <form className="space-y-5 sm:space-y-6" onSubmit={handleSubmit}>
-              
-              {error && (
-                <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#ffdad6] text-[#93000a] p-3 sm:p-4 rounded-lg border border-[#ba1a1a]/20 font-inter text-xs sm:text-sm flex items-start sm:items-center gap-2 sm:gap-3">
-                  <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span>{error}</span>
+            <AnimatePresence mode="wait">
+              {/* PHASE 1: Gatekeeper Prompt */}
+              {isRegistered === null && (
+                <motion.div 
+                  key="gatekeeper-prompt"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex flex-col items-center justify-center py-8 text-center"
+                >
+                  <div className="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mb-4 border border-secondary/20">
+                    <svg className="w-8 h-8 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="font-inter font-bold text-lg sm:text-xl text-primary mb-2">Have you registered for the symposium yet?</h3>
+                  <p className="text-xs sm:text-sm text-on-surface-variant max-w-sm mb-8 leading-relaxed">
+                    Abstract submission requires a valid delegate reference ID to pair with your research.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row w-full gap-4 max-w-md">
+                    <button 
+                      onClick={() => setIsRegistered(true)} 
+                      className="flex-1 bg-surface-bright border border-surface-dim/60 text-primary font-semibold py-3 rounded-xl hover:border-secondary/50 hover:bg-surface-dim/10 transition-colors shadow-sm cursor-pointer"
+                    >
+                      Yes, I have my ID
+                    </button>
+                    <Link 
+                      href="/registration" 
+                      className="flex-1 bg-primary text-white font-semibold py-3 rounded-xl hover:bg-primary/90 transition-colors shadow-sm text-center flex items-center justify-center"
+                    >
+                      No, I need to register
+                    </Link>
+                  </div>
                 </motion.div>
               )}
 
-              <div className="space-y-1.5 sm:space-y-2 text-left">
-                <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Title</label>
-                <input 
-                  required
-                  type="text" 
-                  value={formData.title}
-                  onChange={(e) => setFormData({...formData, title: e.target.value})}
-                  placeholder="Enter the full scientific title of your abstract"
-                  className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-left">
-                <div className="space-y-1.5 sm:space-y-2">
-                  <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Author Names</label>
-                  <input 
-                    required
-                    type="text" 
-                    value={formData.authors}
-                    onChange={(e) => setFormData({...formData, authors: e.target.value})}
-                    placeholder="John Doe, Jane Smith, et al."
-                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                  />
-                </div>
-                
-                <div className="space-y-1.5 sm:space-y-2">
-                  <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presenter Email</label>
-                  <input 
-                    required
-                    type="email" 
-                    value={formData.presenterEmail}
-                    onChange={(e) => setFormData({...formData, presenterEmail: e.target.value})}
-                    placeholder="email@university.edu"
-                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
-                  />
-                  <p className="font-inter text-[9px] sm:text-[11px] text-on-surface-variant mt-1 leading-relaxed">Please use this exact email when you register.</p>
-                </div>
-              </div>
-
-              <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 text-left">
-                <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presentation Type</label>
-                <select 
-                  value={formData.type}
-                  onChange={(e) => setFormData({...formData, type: e.target.value})}
-                  className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors appearance-none"
+              {/* PHASE 2: Core Form (Only mounts when isRegistered is true) */}
+              {isRegistered === true && (
+                <motion.form 
+                  key="abstract-submission-form"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="space-y-5 sm:space-y-6" 
+                  onSubmit={handleSubmit}
                 >
-                  <option value="Oral Presentation">Oral Presentation</option>
-                  <option value="Poster Presentation">Poster Presentation</option>
-                </select>
-              </div>
-
-              <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 text-left">
-                <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Document</label>
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
-                <div 
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`w-full border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center gap-3 sm:gap-4 transition-colors cursor-pointer group ${abstractFile ? 'border-secondary bg-secondary/5' : 'border-surface-dim/80 hover:border-secondary/50 bg-surface-bright/50'}`}
-                >
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors ${abstractFile ? 'bg-secondary text-white' : 'bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white'}`}>
-                    {abstractFile ? (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                    ) : (
-                      <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                    )}
-                  </div>
-                  <div className="text-center font-inter px-2 w-full">
-                    <p className={`text-xs sm:text-sm font-medium mb-1 truncate w-full ${abstractFile ? 'text-secondary font-bold' : 'text-primary'}`}>
-                      {abstractFile ? abstractFile.name : <><span className="font-bold text-secondary">Click to upload</span> <br className="block sm:hidden" /> or drag and drop</>}
-                    </p>
-                    <p className="text-[10px] sm:text-xs text-on-surface-variant tracking-widest uppercase mt-1.5 sm:mt-0">
-                      {abstractFile ? `${(abstractFile.size / 1024 / 1024).toFixed(2)} MB` : 'Word or PDF (Max 10MB)'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-4 sm:pt-6">
-                <motion.button 
-                  disabled={!!loadingStep}
-                  {...springInteraction}
-                  className="w-full bg-primary text-white font-inter font-medium text-sm sm:text-lg py-3.5 sm:py-4 rounded-xl flex items-center justify-center gap-2 sm:gap-3 hover:bg-primary-container transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed"
-                >
-                  {loadingStep ? (
-                    <span className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
-                      <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                      {loadingStep}
-                    </span>
-                  ) : (
-                    <>
-                      Complete Submission
-                      <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                    </>
+                  {error && (
+                    <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-[#ffdad6] text-[#93000a] p-3 sm:p-4 rounded-lg border border-[#ba1a1a]/20 font-inter text-xs sm:text-sm flex items-start sm:items-center gap-2 sm:gap-3">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      <span>{error}</span>
+                    </motion.div>
                   )}
-                </motion.button>
-                <p className="text-center font-inter text-[10px] sm:text-xs text-on-surface-variant mt-3 sm:mt-4 px-2">
-                  You will receive a confirmation email within 24 hours of submission.
-                </p>
-              </div>
-            </form>
+
+                  {/* MANDATORY: Delegate Reference Token Key */}
+                  <div className="bg-secondary/5 border-l-4 border-secondary p-4 rounded-r-xl mb-6 text-left">
+                    <label className="font-inter text-[10px] sm:text-xs font-bold text-secondary uppercase tracking-wide">
+                      Delegate Reference ID
+                    </label>
+                    <input 
+                      required
+                      type="text" 
+                      value={formData.registrationRefId}
+                      onChange={(e) => setFormData({...formData, registrationRefId: e.target.value.toUpperCase()})}
+                      placeholder="REF-XXXXXX-26"
+                      className="w-full mt-2 bg-white border border-secondary/30 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-mono text-sm text-primary tracking-widest focus:outline-none focus:ring-1 focus:ring-secondary uppercase placeholder:tracking-normal placeholder:font-inter"
+                    />
+                    <p className="text-[10px] text-on-surface-variant mt-2 italic leading-relaxed">
+                      Provide the exact ID issued on your registration completion window and email.
+                    </p>
+                  </div>
+
+                  {/* Abstract Title Input */}
+                  <div className="space-y-1.5 sm:space-y-2 text-left">
+                    <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Title</label>
+                    <input 
+                      required
+                      type="text" 
+                      value={formData.title}
+                      onChange={(e) => setFormData({...formData, title: e.target.value})}
+                      placeholder="Enter the full scientific title of your abstract"
+                      className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
+                    />
+                  </div>
+
+                  {/* Author Metadata Inputs */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-left">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Author Names</label>
+                      <input 
+                        required
+                        type="text" 
+                        value={formData.authors}
+                        onChange={(e) => setFormData({...formData, authors: e.target.value})}
+                        placeholder="John Doe, Jane Smith, et al."
+                        className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presenter Email</label>
+                      <input 
+                        required
+                        type="email" 
+                        value={formData.presenterEmail}
+                        onChange={(e) => setFormData({...formData, presenterEmail: e.target.value})}
+                        placeholder="email@university.edu"
+                        className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Presentation Category Selector */}
+                  <div className="space-y-3 pt-1 text-left">
+                    <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide block">
+                      Presentation Type
+                    </label>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      {[
+                        { id: "Oral Presentation", label: "Oral Presentation", desc: "Stage presentation slot candidate" },
+                        { id: "Poster Presentation", label: "Poster Presentation", desc: "Interactive poster arena session" }
+                      ].map((option) => (
+                        <div 
+                          key={option.id}
+                          onClick={() => setFormData({ ...formData, type: option.id })}
+                          className={`p-4 rounded-xl border cursor-pointer transition-all duration-200 select-none flex items-start gap-3 ${
+                            formData.type === option.id 
+                              ? "border-secondary bg-secondary/5 ring-1 ring-secondary shadow-xs" 
+                              : "border-surface-dim/60 hover:border-secondary/30 bg-surface-bright/50"
+                          }`}
+                        >
+                          {/* Customized Custom Circular Radio Dot Anchor */}
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0 mt-0.5 ${
+                            formData.type === option.id ? "border-secondary" : "border-surface-dim/80"
+                          }`}>
+                            {formData.type === option.id && (
+                              <div className="w-2 h-2 rounded-full bg-secondary" />
+                            )}
+                          </div>
+
+                          <div className="space-y-0.5">
+                            <p className={`font-inter text-xs sm:text-sm font-bold ${
+                              formData.type === option.id ? "text-secondary" : "text-primary"
+                            }`}>
+                              {option.label}
+                            </p>
+                            <p className="font-inter text-[10px] sm:text-xs text-on-surface-variant leading-relaxed">
+                              {option.desc}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* File Upload Zone */}
+                  <div className="space-y-1.5 sm:space-y-2 pt-1 text-left">
+                    <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Document</label>
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    <div 
+                      onClick={() => fileInputRef.current?.click()}
+                      className={`w-full border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center gap-3 sm:gap-4 transition-colors cursor-pointer group ${abstractFile ? 'border-secondary bg-secondary/5' : 'border-surface-dim/80 hover:border-secondary/50 bg-surface-bright/50'}`}
+                    >
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors ${abstractFile ? 'bg-secondary text-white' : 'bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white'}`}>
+                        {abstractFile ? (
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        ) : (
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                        )}
+                      </div>
+                      <div className="text-center font-inter px-2 w-full">
+                        <p className={`text-xs sm:text-sm font-medium mb-1 truncate w-full ${abstractFile ? 'text-secondary font-bold' : 'text-primary'}`}>
+                          {abstractFile ? abstractFile.name : <><span className="font-bold text-secondary">Click to upload</span> <br className="block sm:hidden" /> or drag and drop</>}
+                        </p>
+                        <p className="text-[10px] sm:text-xs text-on-surface-variant tracking-widest uppercase mt-1.5 sm:mt-0">
+                          {abstractFile ? `${(abstractFile.size / 1024 / 1024).toFixed(2)} MB` : 'Word or PDF (Max 10MB)'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Submission Commit Button */}
+                  <div className="pt-4">
+                    <motion.button 
+                      disabled={!!loadingStep}
+                      {...springInteraction}
+                      className="w-full bg-primary text-white font-inter font-medium text-sm sm:text-lg py-3.5 sm:py-4 rounded-xl flex items-center justify-center gap-2 sm:gap-3 hover:bg-primary-container transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                      {loadingStep ? (
+                        <span className="flex items-center gap-2 sm:gap-3 text-sm sm:text-base">
+                          <svg className="animate-spin h-4 w-4 sm:h-5 sm:w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                          {loadingStep}
+                        </span>
+                      ) : (
+                        <>
+                          Complete Submission
+                          <svg className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                        </>
+                      )}
+                    </motion.button>
+                    
+                    <p className="text-center font-inter text-[10px] sm:text-xs text-on-surface-variant mt-3 sm:mt-4 px-2">
+                    You will receive a confirmation email within 24 hours of submission.
+                    </p>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </motion.div>
 
       {/* Feature Highlights Footer */}
-      <motion.div 
+      {/* <motion.div 
         className="max-w-[1280px] mx-auto mt-16 sm:mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pt-8 sm:pt-12 border-t border-surface-dim/30 animate-none"
         initial="hidden"
         whileInView="visible"
@@ -462,7 +565,7 @@ export default function SubmissionsPage() {
             </div>
           </motion.div>
         ))}
-      </motion.div>
+      </motion.div> */}
 
     </div>
   );

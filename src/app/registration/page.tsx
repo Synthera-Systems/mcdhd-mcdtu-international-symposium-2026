@@ -473,83 +473,31 @@ export default function RegistrationPage() {
                   )}
                 </AnimatePresence>
 
-                <div className="space-y-4 sm:space-y-6">
-                  <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">
+                {/* --- Replaces the Participation Role selection block in registration/page.tsx --- */}
+                <div className="space-y-4 text-left">
+                  <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide block">
                     Participation Role
                   </label>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-                    {[
-                      { id: "GENERAL_ATTENDEE", label: "General Attendee", desc: "Attending without presenting" },
-                      { id: "ORAL_PRESENTER", label: "Oral Presenter", desc: "Approved for stage presentation" },
-                      { id: "POSTER_PRESENTER", label: "Poster Presenter", desc: "Approved for poster session" }
-                    ].map((role) => (
-                      <div 
-                        key={role.id}
-                        onClick={() => setFormData({...formData, participationType: role.id})}
-                        className={`p-3 sm:p-4 rounded-xl border cursor-pointer transition-all ${
-                          formData.participationType === role.id 
-                            ? "border-secondary bg-secondary/5 ring-1 ring-secondary shadow-sm" 
-                            : "border-surface-dim/50 hover:border-secondary/30 bg-surface-bright"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2">
-                          <div className={`w-3.5 h-3.5 sm:w-4 sm:h-4 rounded-full border flex items-center justify-center shrink-0 ${formData.participationType === role.id ? "border-secondary" : "border-surface-dim"}`}>
-                            {formData.participationType === role.id && <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-secondary" />}
-                          </div>
-                          <p className={`font-inter text-xs sm:text-sm font-bold ${formData.participationType === role.id ? "text-secondary" : "text-primary"}`}>{role.label}</p>
-                        </div>
-                        <p className="font-inter text-[10px] sm:text-[11px] text-on-surface-variant ml-5 sm:ml-7 leading-relaxed">{role.desc}</p>
-                      </div>
-                    ))}
+                  
+                  {/* Elegant Informational Workflow Card */}
+                  <div className="bg-secondary/5 border border-secondary/20 rounded-2xl p-5 sm:p-6 flex items-start gap-4 shadow-sm">
+                    <div className="bg-white p-2 rounded-xl shadow-xs shrink-0 mt-0.5 border border-secondary/10 text-secondary">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-inter text-xs sm:text-lg font-bold text-primary">
+                        Registering as a Symposium Delegate
+                      </p>
+                      <p className="font-inter text-[11px] sm:text-sm text-secondary leading-relaxed">
+                        All delegates register initially as a General Attendee. Upon completing your payment upload and securing this form, you will be issued a unique <span className="font-mono font-bold bg-white px-1.5 py-0.5 rounded border border-secondary/25 text-sm">Reference ID</span>.
+                      </p>
+                      <p className="font-inter text-[11px] sm:text-sm text-secondary leading-relaxed pt-1">
+                        Want to present a Poster or Oral Presentation?Once you get your Reference ID, head directly over to the <Link href="/submissions" className="underline font-bold text-secondary hover:text-secondary-container transition-colors">Submissions tab</Link> to upload your abstract and link it to your profile.
+                      </p>
+                    </div>
                   </div>
-
-                  <AnimatePresence mode="wait">
-                    {formData.participationType !== "GENERAL_ATTENDEE" ? (
-                      <motion.div 
-                        key="presenter-input"
-                        initial={{ opacity: 0, height: 0, y: -10 }} 
-                        animate={{ opacity: 1, height: "auto", y: 0 }} 
-                        exit={{ opacity: 0, height: 0, y: -10 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="bg-surface-bright border border-surface-dim/50 rounded-xl p-4 sm:p-6 mt-2">
-                          <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">
-                            Approved Abstract ID <span className="text-secondary-container lowercase tracking-normal font-normal">(Optional)</span>
-                          </label>
-                          <input 
-                            type="text" 
-                            value={formData.linkedAbstractId}
-                            onChange={e => setFormData({...formData, linkedAbstractId: e.target.value.toUpperCase()})}
-                            placeholder="e.g. ABS-A1B2C3-26" 
-                            className="w-full mt-2 sm:mt-3 bg-white border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-mono text-xs sm:text-sm text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" 
-                          />
-                          <p className="font-inter text-[10px] sm:text-[11px] text-on-surface-variant mt-2 sm:mt-3 leading-relaxed">
-                            If your abstract was approved, enter the ID from your acceptance email. If you are registering first and submitting later, you can leave this blank.
-                          </p>
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <motion.div 
-                        key="attendee-hint"
-                        initial={{ opacity: 0, height: 0, y: -10 }} 
-                        animate={{ opacity: 1, height: "auto", y: 0 }} 
-                        exit={{ opacity: 0, height: 0, y: -10 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="bg-secondary/5 border border-secondary/20 rounded-xl p-4 sm:p-5 mt-2 flex items-start gap-3 sm:gap-4">
-                          <div className="bg-white p-1.5 sm:p-2 rounded-full shadow-sm shrink-0 mt-0.5 border border-secondary/10">
-                            <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                          </div>
-                          <div>
-                            <p className="font-inter text-xs sm:text-sm font-bold text-primary mb-1">Planning to submit an abstract later?</p>
-                            <p className="font-inter text-[10px] sm:text-xs text-secondary leading-relaxed">
-                              You can secure your registration as a General Attendee now. When you submit your research in the <Link href="/submissions" className="underline font-medium hover:text-secondary">Submissions tab</Link>, just ensure you use the same email address <span className="font-mono font-bold bg-white px-1 py-0.5 rounded text-[9px] sm:text-[10px]">{formData.email || ''}</span>so we can automatically link them.
-                            </p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 </div>
 
                 <hr className="border-surface-dim/30" />
