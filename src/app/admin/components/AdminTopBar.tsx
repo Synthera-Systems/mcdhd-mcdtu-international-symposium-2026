@@ -10,6 +10,7 @@ export default function AdminTopBar({ activeTab, adminUser }: TopBarProps) {
     if (activeTab === "HOME") return "Dashboard";
     if (activeTab === "APPROVALS") return "Pending Approvals";
     if (activeTab === "REVIEWS") return "Abstract Reviews";
+    if (activeTab === "SETTINGS") return "System Settings";
     return "Admin Panel";
   };
 

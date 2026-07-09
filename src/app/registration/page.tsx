@@ -75,6 +75,34 @@ export default function RegistrationPage() {
     }
   ];
 
+  const [bankDetails, setBankDetails] = useState({
+    accountName: "",
+    bankName: "",
+    accountNumber: "",
+    ifscCode: "",
+    upiQrUrl: ""
+  });
+
+  const [loadingSettings, setLoadingSettings] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setBankDetails({
+            accountName: data.accountName,
+            bankName: data.bankName,
+            accountNumber: data.accountNumber,
+            ifscCode: data.ifscCode,
+            upiQrUrl: data.upiQrUrl
+          });
+        }
+      })
+      .catch((err) => console.error("Error fetching payment settings:", err))
+      .finally(() => setLoadingSettings(false));
+  }, []);
+  
   // Auto-scroll to top when the success screen renders
   useEffect(() => {
     if (successRef) {
@@ -500,33 +528,52 @@ export default function RegistrationPage() {
                 <hr className="border-surface-dim/30" />
 
                 <motion.div variants={fadeUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-6 sm:mb-8">
-                <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-6 sm:mb-8">Institutional Bank Details</h3>
+                <h3 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-6 sm:mb-8">Bank Details</h3>
                 <div className="bg-surface-bright rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 border border-surface-dim/50 max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
                     <div className="w-full space-y-4 sm:space-y-6 text-left flex-grow">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      {loadingSettings ? (
+                        <>
+                          <div className="animate-pulse space-y-2"><div className="h-3 w-20 bg-surface-dim/60 rounded" /><div className="h-5 w-40 bg-surface-dim rounded animate-pulse" /></div>
+                          <div className="animate-pulse space-y-2"><div className="h-3 w-20 bg-surface-dim/60 rounded" /><div className="h-5 w-40 bg-surface-dim rounded animate-pulse" /></div>
+                          <div className="animate-pulse space-y-2"><div className="h-3 w-25 bg-surface-dim/60 rounded" /><div className="h-6 w-48 bg-surface-dim rounded animate-pulse" /></div>
+                          <div className="animate-pulse space-y-2"><div className="h-3 w-20 bg-surface-dim/60 rounded" /><div className="h-6 w-32 bg-surface-dim rounded animate-pulse" /></div>
+                        </>
+                      ) : (
+                        <>
                           <div>
                             <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Account Name</p>
-                            <p className="font-inter text-sm sm:text-lg text-primary font-medium">MitoCan-Symposium 2026</p>
+                            <p className="font-inter text-sm sm:text-lg text-primary font-medium">{bankDetails.accountName}</p>
                           </div>
                           <div>
                             <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Bank Name</p>
-                            <p className="font-inter text-sm sm:text-lg text-primary font-medium">State Bank of India</p>
+                            <p className="font-inter text-sm sm:text-lg text-primary font-medium">{bankDetails.bankName}</p>
                           </div>
                           <div>
                             <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">Account Number</p>
-                            <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">98765432101</p>
+                            <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">{bankDetails.accountNumber}</p>
                           </div>
                           <div>
                             <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mb-1">IFSC Code</p>
-                            <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">SBIN0001234</p>
+                            <p className="font-inter text-base sm:text-xl text-primary font-bold font-mono tracking-wider">{bankDetails.ifscCode}</p>
                           </div>
+                        </>
+                      )}
                       </div>
                     </div>
+
+                    {/* UPI QR Wrapper Section */}
                     <div className="w-full md:w-auto flex flex-col items-center gap-2 sm:gap-3 pt-6 md:pt-0 md:pl-8 border-t md:border-t-0 md:border-l border-surface-dim/50 shrink-0">
                       <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl shadow-md border border-surface-dim/30 p-2 flex items-center justify-center relative overflow-hidden">
-                          <div className="absolute inset-0 bg-gradient-to-br from-primary-container to-primary m-1.5 sm:m-2 rounded flex items-center justify-center">
-                            <svg className="w-8 h-8 sm:w-12 sm:h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
-                          </div>
+                      {loadingSettings ? (
+                        <div className="absolute inset-0 bg-surface-dim animate-pulse m-2 rounded" />
+                      ) : bankDetails.upiQrUrl ? (
+                        <img src={bankDetails.upiQrUrl} alt="UPI Payment QR" className="w-full h-full object-contain" />
+                      ) : (
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary-container to-primary m-1.5 sm:m-2 rounded flex items-center justify-center">
+                          <svg className="w-8 h-8 sm:w-12 sm:h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
+                        </div>
+                      )}
                       </div>
                       <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Scan for UPI Payment</p>
                     </div>

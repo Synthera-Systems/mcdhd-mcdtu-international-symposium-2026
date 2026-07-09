@@ -7,6 +7,7 @@ import AdminTopBar from "./components/AdminTopBar";
 import PendingApprovals from "./components/PendingApprovals";
 import AbstractReviews from "./components/AbstractReviews";
 import Home from "./components/Home";
+import SystemSettingsView from "./components/SystemSettings";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -106,6 +107,10 @@ export default function AdminPage() {
             
             {activeTab === "REVIEWS" && (
               <AbstractReviews />
+            )}
+
+            {activeTab === "SETTINGS" && (
+              <SystemSettingsView />
             )}
 
           </div>

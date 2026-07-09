@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,7 +22,6 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
 };
 
-// Marquee logos restricted ONLY to the top "In Association With" banner on the poster
 const associationLogos = [
   { name: "Rutgers Health", src: "/logos/rutgers.png" },
   { name: "Roswell Park Comprehensive Cancer Center", src: "/logos/roswell.png" },
@@ -32,11 +32,25 @@ const associationLogos = [
 ];
 
 export default function Home() {
+  const [symposiumDates, setSymposiumDates] = useState("");
+  const [loading, setLoading] = useState(true); // ADDED: Loading context flag
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.symposiumDates) {
+          setSymposiumDates(data.symposiumDates);
+        }
+      })
+      .catch((err) => console.error("Error loading layout settings:", err))
+      .finally(() => setLoading(false)); // ADDED: Kill loading loop on resolution
+  }, []);
+
   return (
     <main className="flex flex-col w-full min-h-screen">
       
       {/* 1. HERO SECTION */}
-      {/* FIX: Changed to min-h-[100svh], added items-center for vertical centering, and reduced mobile pb to pb-32 */}
       <section className="relative w-full min-h-[100svh] md:min-h-[90vh] flex items-center justify-center bg-primary-container text-on-primary pt-16 sm:pt-20 pb-32 sm:pb-40 md:pb-64 px-4 sm:px-6 md:px-12 lg:px-24 overflow-hidden">
         
         {/* Background Image with Navy Overlay */}
@@ -48,20 +62,28 @@ export default function Home() {
             className="object-cover opacity-40 mix-blend-luminosity"
             priority
           />
-          {/* Gradient to ensure text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-primary-container/80 via-primary-container/60 to-primary-container/90" />
         </div>
 
         <motion.div 
-          className="relative z-10 max-w-[1280px] mx-auto flex flex-col items-center text-center gap-5 sm:gap-6 -mt-8 sm:-mt-12" // Slightly bumped up to visually balance the marquee at the bottom
+          className="relative z-10 max-w-[1280px] mx-auto flex flex-col items-center text-center gap-5 sm:gap-6 -mt-8 sm:-mt-12"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
         >
-          <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/80 text-on-primary text-lg sm:text-sm md:text-xl font-semibold tracking-widest uppercase mb-1 sm:mb-2 backdrop-blur-sm">
-          <svg className="w-4 h-4 sm:w-5 sm:h-5 overflow-visible" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" className="fill-blue-400 animate-ping origin-center"/><circle cx="12" cy="12" r="6" className="fill-blue-500"/></svg>            <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-            October 26 - 27, 2026
-          </motion.div>
+          {/* UPDATED: Dynamic / Loading Date Pill */}
+          {loading ? (
+            <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary/10 border border-secondary/30 text-on-primary backdrop-blur-sm animate-pulse w-48 sm:w-56 h-9 sm:h-10">
+              <div className="w-3.5 h-3.5 rounded-full bg-blue-400/40 shrink-0" />
+              <div className="h-3.5 bg-white/20 rounded w-full" />
+            </div>
+          ) : (
+            <motion.div variants={fadeUp} className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-secondary/20 border border-secondary/80 text-on-primary text-lg sm:text-sm md:text-xl font-semibold tracking-widest uppercase mb-1 sm:mb-2 backdrop-blur-sm">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 overflow-visible" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" className="fill-blue-400 animate-ping origin-center"/><circle cx="12" cy="12" r="6" className="fill-blue-500"/></svg>
+              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              {symposiumDates}
+            </motion.div>
+          )}
           
           <motion.h1 variants={fadeUp} className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-playfair font-bold leading-tight tracking-tight max-w-5xl drop-shadow-lg px-2">
             International Symposium on Mitochondria, Cell Death, and Human Disease
@@ -85,8 +107,8 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-       {/* Marquee - In Association With */}
-       <div className="absolute bottom-0 left-0 w-full border-t border-secondary/20 bg-primary-container/50 backdrop-blur-md pt-3 sm:pt-4 pb-3 sm:pb-4 overflow-hidden z-20">
+        {/* Marquee - In Association With */}
+        <div className="absolute bottom-0 left-0 w-full border-t border-secondary/20 bg-primary-container/50 backdrop-blur-md pt-3 sm:pt-4 pb-3 sm:pb-4 overflow-hidden z-20">
           <div className="max-w-[1280px] mx-auto px-4 sm:px-6 mb-2 sm:mb-3">
             <p className="text-center text-sm sm:text-lg font-bold tracking-widest text-secondary-container uppercase">In Association With</p>
           </div>
@@ -95,19 +117,11 @@ export default function Home() {
             <motion.div
               className="flex gap-8 sm:gap-16 md:gap-24 w-max px-4 sm:px-8"
               animate={{ x: ["0%", "-50%"] }}
-              transition={{
-                ease: "linear",
-                duration: 25,
-                repeat: Infinity,
-              }}
+              transition={{ ease: "linear", duration: 25, repeat: Infinity }}
             >
               {[...associationLogos, ...associationLogos, ...associationLogos, ...associationLogos].map((logo, idx) => (
                 <div key={idx} className="flex items-center justify-center shrink-0">
-                  <img 
-                    src={logo.src} 
-                    alt={logo.name} 
-                    className="h-10 sm:h-16 md:h-24 w-auto object-contain drop-shadow-md" 
-                  />
+                  <img src={logo.src} alt={logo.name} className="h-10 sm:h-16 md:h-24 w-auto object-contain drop-shadow-md" />
                 </div>
               ))}
             </motion.div>
@@ -116,7 +130,7 @@ export default function Home() {
       </section>
 
       {/* 2. ABOUT SECTION */}
-      <section className="w-full py-16 sm:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface overflow-hidden">
+      <section className="w-full py-15 sm:pb-16 sm:pt-8 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface overflow-hidden">
         <motion.div 
           className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 items-center"
           initial="hidden"
@@ -163,7 +177,7 @@ export default function Home() {
       </section>
 
       {/* 3. THEMES SECTION */}
-      <section className="w-full py-16 sm:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface-bright border-y border-surface-dim/30">
+      <section className="w-full py-3 sm:pb-13 sm:pt-6 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface-bright border-y border-surface-dim/30">
         <motion.div 
           className="max-w-[1280px] mx-auto flex flex-col items-center"
           initial="hidden"
@@ -239,7 +253,7 @@ export default function Home() {
       </section>
 
       {/* 4. ORGANIZING COMMITTEE SECTION */}
-      <section className="w-full py-16 sm:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface justify-center">
+      <section className="w-full py-3 sm:pb-13 sm:pt-6 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface justify-center">
         <motion.div 
           className="max-w-[1280px] mx-auto"
           initial="hidden"
@@ -281,22 +295,31 @@ export default function Home() {
           </div>
 
           {/* Convenor Banner */}
-          <motion.div className="group bg-surface-bright border border-surface-dim/30 p-6 sm:p-8 rounded-2xl flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow max-w-[32.3%] mx-auto mb-10">
-                <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-secondary uppercase bg-secondary/10 px-3 py-1 rounded-full mb-4">Convenor & Organizing Secretary</span>
-                
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 mb-3 sm:mb-4 rounded-full overflow-hidden shrink-0 bg-surface/50 border-2 border-secondary/10 shadow-inner">
-                  <Image 
-                    src='/convenors/ramteke.png'
-                    alt='Prof. Anand Shankar Ramteke' 
-                    fill 
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                  /> 
-                </div>
+          <motion.div 
+            variants={fadeUp} 
+            className="group bg-surface-bright border border-surface-dim/30 p-6 sm:p-8 rounded-2xl flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow w-full max-w-sm md:max-w-[32.3%] mx-auto mb-10"
+          >
+            <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-secondary uppercase bg-secondary/10 px-4 py-2 rounded-2xl mb-4 max-w-[90%] sm:max-w-none">
+              Convenor & Organizing Secretary
+            </span>
+            
+            <div className="relative w-24 h-24 sm:w-28 sm:h-28 mb-3 sm:mb-4 rounded-full overflow-hidden shrink-0 bg-surface/50 border-2 border-secondary/10 shadow-inner">
+              <Image 
+                src='/convenors/ramteke.png'
+                alt='Prof. Anand Shankar Ramteke' 
+                fill 
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              /> 
+            </div>
 
-                <h3 className="text-base sm:text-lg font-playfair font-bold text-primary mb-1">Prof. Anand Shankar Ramteke</h3>
-                <p className="text-xs sm:text-sm font-medium text-on-surface-variant">Professor, MBBT Department</p>
-                <p className="text-[10px] sm:text-xs text-secondary mt-1">Tezpur University</p>
+            <h3 className="text-base sm:text-lg font-playfair font-bold text-primary mb-1 whitespace-normal sm:whitespace-nowrap">
+              Prof. Anand Shankar Ramteke
+            </h3>
+            <p className="text-xs sm:text-sm font-medium text-on-surface-variant max-w-[200px] sm:max-w-none">
+              Professor, MBBT Department
+            </p>
+            <p className="text-[10px] sm:text-xs text-secondary mt-1">Tezpur University</p>
           </motion.div>
 
           {/* <motion.div variants={fadeUp} className="group flex flex-col items-center bg-primary text-white rounded-2xl p-6 sm:p-8 mb-12 sm:mb-16 shadow-lg text-center max-w-3xl mx-auto border border-primary-container">
@@ -326,7 +349,7 @@ export default function Home() {
           {/* Co-Convenors Grid */}
           <motion.div variants={fadeUp}>
             <h3 className="text-xl sm:text-2xl font-playfair font-bold text-center text-primary mb-6 sm:mb-8">Co-Convenors</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {[
                 { name: "Prof. Raymond B. Birge", img: "/convenors/raymond-birge.png" , org: "Rutgers School of Biomedical and Health Sciences", loc: "Newark, USA" },
                 { name: "Prof. Dhyan Chandra", img: "/convenors/dhyan-chandra.png" , org: "Roswell Park Comprehensive Cancer Center", loc: "New York, USA" },
@@ -362,7 +385,7 @@ export default function Home() {
       </section>
 
       {/* 5. AWARDS SECTION */}
-      <section className="w-full py-16 sm:py-24 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface-bright border-t border-surface-dim/30">
+      <section className="w-full py-3 sm:pb-13 sm:pt-6 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface-bright border-t border-surface-dim/30">
         <motion.div 
           className="max-w-[1280px] mx-auto"
           initial="hidden"

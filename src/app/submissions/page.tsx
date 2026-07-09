@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
@@ -20,6 +20,18 @@ const staggerContainer: Variants = {
   visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
 
+// Premium date formatting helper to turn "2026-10-15" into "Oct 15, 2026"
+const formatDate = (dateStr: string, fallback: string) => {
+  if (!dateStr) return fallback;
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr; // Safe fallback if it's already written as plain text string
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric"
+  });
+};
+
 export default function SubmissionsPage() {
   // --- Form State ---
   const [formData, setFormData] = useState({ 
@@ -36,7 +48,30 @@ export default function SubmissionsPage() {
   const [successRef, setSuccessRef] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   
+  // --- NEW: Dynamic System Configuration States ---
+  const [deadlines, setDeadlines] = useState({
+    submissionDeadline: "",
+    notificationDate: ""
+  });
+  const [loadingDeadlines, setLoadingDeadlines] = useState(true);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load configuration options from DB
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.error) {
+          setDeadlines({
+            submissionDeadline: data.submissionDeadline || "",
+            notificationDate: data.notificationDate || ""
+          });
+        }
+      })
+      .catch((err) => console.error("Error loading timelines:", err))
+      .finally(() => setLoadingDeadlines(false));
+  }, []);
 
   // Auto-scroll to top on success
   useEffect(() => {
@@ -58,14 +93,12 @@ export default function SubmissionsPage() {
     setError(null);
     if (!file) return;
 
-    // Validation: Max 10MB
     if (file.size > 10 * 1024 * 1024) {
       setError("File exceeds 10MB limit. Please compress and try again.");
       setAbstractFile(null);
       return;
     }
 
-    // Validation: PDF or Word Docs
     const validTypes = [
       'application/pdf', 
       'application/msword', 
@@ -131,7 +164,6 @@ export default function SubmissionsPage() {
     }
   };
 
-  // --- SUCCESS SCREEN ---
   if (successRef) {
     return (
       <div className="w-full min-h-[100svh] md:min-h-[85vh] flex items-center justify-center bg-surface px-4 sm:px-6 py-12">
@@ -204,7 +236,6 @@ export default function SubmissionsPage() {
     );
   }
 
-  // --- MAIN SUBMISSION SCREEN ---
   return (
     <div className="w-full min-h-screen bg-surface pt-8 sm:pt-12 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 lg:px-24">
       
@@ -256,22 +287,35 @@ export default function SubmissionsPage() {
             </ul>
           </motion.div>
 
-          <motion.div variants={fadeUp} className="bg-primary-container p-6 sm:p-8 rounded-2xl shadow-xl relative overflow-hidden">
+          {/* UPDATED: Dynamic Key Deadlines container layout */}
+          <motion.div variants={fadeUp} className="bg-primary-container p-6 sm:p-8 rounded-2xl shadow-xl relative overflow-hidden text-left">
             <div className="absolute -bottom-6 -right-6 opacity-10">
               <svg className="w-40 h-40 sm:w-48 sm:h-48 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </div>
-            <div className="relative z-10">
+            <div className="relative z-10 w-full">
               <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-1.5 sm:mb-2">Key Deadlines</h3>
               <p className="font-inter text-inverse-primary text-xs sm:text-sm mb-6 sm:mb-8">Mark your calendars for clinical review phases.</p>
               
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex justify-between items-center pb-3 sm:pb-4 border-b border-white/10">
+                <div className="flex justify-between items-center pb-3 sm:pb-4 border-b border-white/10 min-h-9">
                   <span className="font-inter text-xs sm:text-sm font-medium text-white">Submission Deadline</span>
-                  <span className="font-inter text-xs sm:text-sm font-bold text-secondary-container">Oct 15, 2026</span>
+                  {loadingDeadlines ? (
+                    <div className="h-4 w-20 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    <span className="font-inter text-xs sm:text-sm font-bold text-secondary-container">
+                      {formatDate(deadlines.submissionDeadline, "Oct 15, 2026")}
+                    </span>
+                  )}
                 </div>
-                <div className="flex justify-between items-center pt-1.5 sm:pt-2">
+                <div className="flex justify-between items-center pt-1.5 sm:pt-2 min-h-6">
                   <span className="font-inter text-xs sm:text-sm font-medium text-white">Notification Date</span>
-                  <span className="font-inter text-xs sm:text-sm font-bold text-white">Nov 01, 2026</span>
+                  {loadingDeadlines ? (
+                    <div className="h-4 w-20 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    <span className="font-inter text-xs sm:text-sm font-bold text-white">
+                      {formatDate(deadlines.notificationDate, "Nov 01, 2026")}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -292,7 +336,7 @@ export default function SubmissionsPage() {
                 </motion.div>
               )}
 
-              <div className="space-y-1.5 sm:space-y-2">
+              <div className="space-y-1.5 sm:space-y-2 text-left">
                 <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Title</label>
                 <input 
                   required
@@ -304,7 +348,7 @@ export default function SubmissionsPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-left">
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Author Names</label>
                   <input 
@@ -317,7 +361,6 @@ export default function SubmissionsPage() {
                   />
                 </div>
                 
-                {/* NEW FIELD: Presenter Email */}
                 <div className="space-y-1.5 sm:space-y-2">
                   <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presenter Email</label>
                   <input 
@@ -332,7 +375,7 @@ export default function SubmissionsPage() {
                 </div>
               </div>
 
-              <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2">
+              <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 text-left">
                 <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Presentation Type</label>
                 <select 
                   value={formData.type}
@@ -344,7 +387,7 @@ export default function SubmissionsPage() {
                 </select>
               </div>
 
-              <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2">
+              <div className="space-y-1.5 sm:space-y-2 pt-1 sm:pt-2 text-left">
                 <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Document</label>
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
                 <div 
@@ -398,7 +441,7 @@ export default function SubmissionsPage() {
 
       {/* Feature Highlights Footer */}
       <motion.div 
-        className="max-w-[1280px] mx-auto mt-16 sm:mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pt-8 sm:pt-12 border-t border-surface-dim/30"
+        className="max-w-[1280px] mx-auto mt-16 sm:mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 pt-8 sm:pt-12 border-t border-surface-dim/30 animate-none"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
@@ -409,7 +452,7 @@ export default function SubmissionsPage() {
           { title: "Global Reach", desc: "Top-selected abstracts will be published in the Symposium proceedings.", icon: "M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" },
           { title: "Scholarships", desc: "Travel grants available for top 10 outstanding student submissions.", icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" }
         ].map((feature, idx) => (
-          <motion.div key={idx} variants={fadeUp} className="flex items-start gap-3 sm:gap-4">
+          <motion.div key={idx} variants={fadeUp} className="flex items-start gap-3 sm:gap-4 text-left">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-secondary/10 flex items-center justify-center shrink-0 mt-0.5">
               <svg className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={feature.icon} /></svg>
             </div>

@@ -1,5 +1,5 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
@@ -10,6 +10,19 @@ const springInteraction = {
 };
 
 export default function Footer() {
+  const [symposiumDates, setSymposiumDates] = useState("");
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.symposiumDates) {
+          setSymposiumDates(data.symposiumDates);
+        }
+      })
+      .catch((err) => console.error("Error loading layout settings:", err));
+  }, []);
+
   return (
     <footer className="w-full bg-[#0a0a0a] text-surface-dim pt-16 sm:pt-20 pb-8 sm:pb-10 px-4 sm:px-6 md:px-12 lg:px-24 border-t border-white/10">
       <div className="max-w-[1280px] mx-auto">
@@ -74,20 +87,20 @@ export default function Footer() {
               </p>
               <p className="flex items-center gap-2 pt-1 sm:pt-2">
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-container shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                October 26 - 27, 2026
+                {symposiumDates}
               </p>
             </div>
           </div>
 
           {/* Institutional Partners */}
-          <div className="md:col-span-2 space-y-4 sm:space-y-6 text-center sm:text-left">
+          {/* <div className="md:col-span-2 space-y-4 sm:space-y-6 text-center sm:text-left">
              <h4 className="font-inter text-[11px] sm:text-xs font-bold tracking-widest uppercase text-white">In Association With</h4>
              <ul className="space-y-2 sm:space-y-3 font-inter text-xs sm:text-sm text-[#A0A0A0]">
                 <li>Tezpur University</li>
                 <li>Rutgers Health</li>
                 <li>Roswell Park Cancer Center</li>
              </ul>
-          </div>
+          </div> */}
         </div>
 
         {/* Divider */}

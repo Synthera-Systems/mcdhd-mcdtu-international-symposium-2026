@@ -76,3 +76,16 @@ model Submission {
   reviewedBy     String?  // NEW: Audit log trail
   createdAt      DateTime @default(now())
 }
+
+model SystemSettings {
+  id                  Int      @id @default(1) // Enforces single-row configuration
+  symposiumDates      String   @default("")
+  submissionDeadline  String   @default("")
+  notificationDate    String   @default("")
+  accountName         String   @default("")
+  bankName            String   @default("")
+  accountNumber       String   @default("")
+  ifscCode            String   @default("")
+  upiQrUrl            String   @default("") 
+  updatedAt           DateTime @updatedAt
+}
