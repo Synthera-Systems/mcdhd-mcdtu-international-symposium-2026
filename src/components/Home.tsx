@@ -353,8 +353,8 @@ export default function Home() {
             {[
                 { name: "Prof. Raymond B. Birge", img: "/convenors/raymond-birge.png" , org: "Rutgers School of Biomedical and Health Sciences", loc: "Newark, USA" },
                 { name: "Prof. Dhyan Chandra", img: "/convenors/dhyan-chandra.png" , org: "Roswell Park Comprehensive Cancer Center", loc: "New York, USA" },
-                { name: "Prof. Jerry Chipuk", img: "/speakers/jerry-chipuk.png",org: "Icahn School of Medicine Mount Sinai", loc: " New York, USA" },
-                { name: "Prof. Ajay Singh", img: "/speakers/ajay.png", org: "Mitchell Cancer Institute", loc: "Alabama, USA"},
+                // { name: "Prof. Jerry Chipuk", img: "/speakers/jerry-chipuk.png",org: "Icahn School of Medicine Mount Sinai", loc: " New York, USA" },
+                // { name: "Prof. Ajay Singh", img: "/speakers/ajay.png", org: "Mitchell Cancer Institute", loc: "Alabama, USA"},
                 { name: "Prof. Paulraj Rajamani", img: "/convenors/paulraj.png" , org: "Jawaharlal Nehru University", loc: "New Delhi, India" },
                 { name: "Prof. S. Dhanalakshmi", img: "/convenors/dhanlakshmi.png" , org: "Gautam Buddha University", loc: "Noida, India" },
                 { name: "Dr. Rajeev Kumar", img: "/convenors/rajeev.png" , org: "Cachar Cancer Hospital and Research Center", loc: "Silchar, India" },

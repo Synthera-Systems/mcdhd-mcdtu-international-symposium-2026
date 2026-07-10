@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import imageCompression from "browser-image-compression";
+import ImageCropperModal from "../../components/ImageCropperModal";
 
 const springInteraction = { 
   whileTap: { scale: 0.97 }, 
@@ -24,6 +25,9 @@ const staggerContainer: Variants = {
 export default function RegistrationPage() {
   // --- Form State ---
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [tempImageSrc, setTempImageSrc] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({ 
     fullName: "", 
     affiliation: "", 
@@ -131,37 +135,33 @@ export default function RegistrationPage() {
     setError(null);
     if (!file) return;
 
-    if (file.size > 1 * 1024 * 1024) {
-      setError("File exceeds 1MB limit. Please compress and try again.");
-      setReceiptFile(null);
+    if (file.size > 2 * 1024 * 1024) { 
+      setError("File exceeds 2MB limit.");
       return;
     }
 
-    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
-    if (!validTypes.includes(file.type)) {
-      setError("Invalid file format. Only JPG, PNG, WEBP, or PDF are allowed.");
-      setReceiptFile(null);
-      return;
-    }
-
-    if (file.type !== "application/pdf") {
-      try {
-        const options = {
-          maxSizeMB: 0.2, // Targets ~200KB max size
-          maxWidthOrHeight: 1280, // Resizes large phone dimensions safely
-          useWebWorker: true
-        };
-        const compressedBlob = await imageCompression(file, options);
-        const compressedFile = new File([compressedBlob], file.name, { type: file.type });
-        setReceiptFile(compressedFile);
-      } catch (compressErr) {
-        console.error("Compression skipped, using original:", compressErr);
-        setReceiptFile(file); 
-      }
-    } else {
+    if (file.type === "application/pdf") {
       setReceiptFile(file);
+      return;
     }
 
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (validTypes.includes(file.type)) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => {
+        setTempImageSrc(reader.result?.toString() || "");
+        setCropModalOpen(true);
+      });
+      reader.readAsDataURL(file);
+    } else {
+      setError("Invalid format. Only JPG, PNG, WEBP, or PDF allowed.");
+    }
+  };
+
+  const handleCropSave = (croppedFile: File) => {
+    setReceiptFile(croppedFile);
+    setCropModalOpen(false);
+    setTempImageSrc(null);
   };
 
   const handleRegistration = async (e: React.FormEvent) => {
@@ -633,10 +633,16 @@ export default function RegistrationPage() {
         )}
       </AnimatePresence>
 
-      {/* {selectedTier && (
-        
-      )} */}
-
+      <ImageCropperModal 
+        isOpen={cropModalOpen} 
+        imageSrc={tempImageSrc || ""} 
+        onClose={() => {
+          setCropModalOpen(false);
+          setTempImageSrc(null);
+          if (fileInputRef.current) fileInputRef.current.value = ""; 
+        }} 
+        onCropComplete={handleCropSave} 
+      />
     </div>
   );
 }

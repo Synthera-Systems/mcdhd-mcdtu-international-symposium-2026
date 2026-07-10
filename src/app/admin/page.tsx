@@ -8,6 +8,7 @@ import PendingApprovals from "./components/PendingApprovals";
 import AbstractReviews from "./components/AbstractReviews";
 import Home from "./components/Home";
 import SystemSettingsView from "./components/SystemSettings";
+import DataExporter from "./components/DataExporter";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -93,7 +94,7 @@ export default function AdminPage() {
         />
         
         {/* Scrollable Content Canvas */}
-        <main className="flex-1 overflow-y-auto w-full p-6 md:p-10 relative z-0">
+        <main className="flex-1 overflow-y-auto w-full p-6 md:p-10 ">
           <div className="max-w-[1440px] mx-auto h-full flex flex-col">
             
             {/* Component Placeholders - We will replace these with real files next! */}
@@ -111,6 +112,10 @@ export default function AdminPage() {
 
             {activeTab === "SETTINGS" && (
               <SystemSettingsView />
+            )}
+
+            {activeTab === "EXPORT-DATA" && (
+              <DataExporter />
             )}
 
           </div>

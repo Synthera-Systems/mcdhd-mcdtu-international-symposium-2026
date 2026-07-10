@@ -191,7 +191,7 @@ export default function SubmissionsPage() {
           
           <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-3 sm:mb-4">Abstract Submitted!</h2>
           <p className="font-inter text-sm sm:text-base text-on-surface-variant mb-6 sm:mb-8 leading-relaxed px-2">
-            Your research has been successfully submitted to the scientific committee. It is currently queued for the triple-blind review process.
+            Your research has been successfully submitted to the scientific committee. It is currently queued for the review process.
           </p>
           
           <div className="bg-surface-bright p-5 sm:p-6 rounded-2xl border border-surface-dim/50 mb-8 sm:mb-10 relative">
@@ -223,7 +223,7 @@ export default function SubmissionsPage() {
             )}
           </div>
           
-          <div className="flex flex-col items-center gap-3 sm:gap-4 w-full">
+          {/* <div className="flex flex-col items-center gap-3 sm:gap-4 w-full">
             <Link href="/registration" className="w-full max-w-sm bg-primary text-white font-inter text-sm sm:text-base font-medium py-3 sm:py-3.5 rounded-xl hover:bg-primary-container transition-colors shadow-sm">
               Proceed to Registration
             </Link>
@@ -233,7 +233,7 @@ export default function SubmissionsPage() {
             >
               Submit another abstract
             </button>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     );

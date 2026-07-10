@@ -42,7 +42,10 @@ export default function AdminSidebar({ activeTab, setActiveTab, handleLogout }: 
       </nav>
 
       <div className="p-6 space-y-4 shrink-0">
-        <button className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer shadow-sm">
+        <button 
+          onClick={() => setActiveTab("EXPORT-DATA")} 
+          className="w-full flex items-center justify-center gap-2 bg-primary text-white py-3.5 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors cursor-pointer shadow-sm"
+        >
           <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
           Export Data
         </button>
