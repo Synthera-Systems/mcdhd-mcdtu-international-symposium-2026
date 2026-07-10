@@ -348,11 +348,38 @@ export default function Home() {
 
           {/* Co-Convenors Grid */}
           <motion.div variants={fadeUp}>
-            <h3 className="text-xl sm:text-2xl font-playfair font-bold text-center text-primary mb-6 sm:mb-8">Co-Convenors</h3>
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <h3 className="text-xl sm:text-2xl font-playfair font-bold text-center text-primary mb-6 sm:mb-8">International Convenors</h3>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
             {[
                 { name: "Prof. Raymond B. Birge", img: "/convenors/raymond-birge.png" , org: "Rutgers School of Biomedical and Health Sciences", loc: "Newark, USA" },
                 { name: "Prof. Dhyan Chandra", img: "/convenors/dhyan-chandra.png" , org: "Roswell Park Comprehensive Cancer Center", loc: "New York, USA" },
+              ].map((person, idx) => (
+                <div key={idx} className="group bg-white border border-surface-dim/20 p-4 sm:p-6 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:-translate-y-1 transition-transform flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4 sm:gap-6">
+                  <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full sm:rounded-lg overflow-hidden shrink-0 bg-surface-bright">
+                    <Image 
+                      src={person.img} 
+                      alt={person.name} 
+                      fill 
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                    /> 
+                  </div>
+                  
+                  <div className="flex-1 flex flex-col">
+                    <h4 className="text-sm sm:text-2xl font-playfair font-bold text-primary mb-1 sm:mb-2">{person.name}</h4>
+                    <p className="text-[11px] sm:text-lg font-inter text-on-surface-variant leading-relaxed flex-1">{person.org}</p>
+                    <p className="text-[10px] sm:text-sm font-medium text-secondary mt-1 sm:mt-2 shrink-0">{person.loc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+          <motion.div variants={fadeUp}>
+            <h3 className="text-xl sm:text-2xl mt-6 font-playfair font-bold text-center text-primary mb-6 sm:mb-8">Co-Convenors</h3>
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6">
+            {[
+                // { name: "Prof. Raymond B. Birge", img: "/convenors/raymond-birge.png" , org: "Rutgers School of Biomedical and Health Sciences", loc: "Newark, USA" },
+                // { name: "Prof. Dhyan Chandra", img: "/convenors/dhyan-chandra.png" , org: "Roswell Park Comprehensive Cancer Center", loc: "New York, USA" },
                 // { name: "Prof. Jerry Chipuk", img: "/speakers/jerry-chipuk.png",org: "Icahn School of Medicine Mount Sinai", loc: " New York, USA" },
                 // { name: "Prof. Ajay Singh", img: "/speakers/ajay.png", org: "Mitchell Cancer Institute", loc: "Alabama, USA"},
                 { name: "Prof. Paulraj Rajamani", img: "/convenors/paulraj.png" , org: "Jawaharlal Nehru University", loc: "New Delhi, India" },
@@ -372,9 +399,9 @@ export default function Home() {
                   </div>
                   
                   <div className="flex-1 flex flex-col">
-                    <h4 className="text-sm sm:text-base font-playfair font-bold text-primary mb-1 sm:mb-2">{person.name}</h4>
-                    <p className="text-[11px] sm:text-xs font-inter text-on-surface-variant leading-relaxed flex-1">{person.org}</p>
-                    <p className="text-[10px] sm:text-[11px] font-medium text-secondary mt-1 sm:mt-2 shrink-0">{person.loc}</p>
+                    <h4 className="text-sm sm:text-2xl font-playfair font-bold text-primary mb-1 sm:mb-2">{person.name}</h4>
+                    <p className="text-[11px] sm:text-lg font-inter text-on-surface-variant leading-relaxed flex-1">{person.org}</p>
+                    <p className="text-[10px] sm:text-sm font-medium text-secondary mt-1 sm:mt-2 shrink-0">{person.loc}</p>
                   </div>
                 </div>
               ))}
