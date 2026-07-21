@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
-
+import DownloadFlyerButton from "./DownloadFlyerButton"
 const springInteraction = {
   whileTap: { scale: 0.95 },
   transition: { type: "spring" as const, stiffness: 400, damping: 25 }
@@ -124,6 +124,7 @@ export default function Footer() {
               <ul className="space-y-2 sm:space-y-3 font-inter text-[11px] sm:text-sm">
                 <li><Link href="/privacy" className="text-[#A0A0A0] hover:text-white hover:underline transition-colors block">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="text-[#A0A0A0] hover:text-white hover:underline transition-colors block">Terms of Service</Link></li>
+                <li><DownloadFlyerButton variant="footer" /></li>
               </ul>
             </div>
             

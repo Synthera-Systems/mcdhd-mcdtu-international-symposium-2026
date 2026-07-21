@@ -420,9 +420,10 @@ export default function Home() {
           viewport={{ once: true, margin: "-100px" }}
           variants={staggerContainer}
         >
-          <motion.div variants={fadeUp} className="mb-10 sm:mb-16 text-center md:text-left">
+          <motion.div variants={fadeUp} className="mb-10 sm:mb-16 text-center items-center justify-center flex flex-col ">
             <h2 className="text-2xl sm:text-3xl md:text-5xl font-playfair font-semibold text-primary mb-4 sm:mb-6">Academic Recognition</h2>
-            <p className="text-on-surface-variant font-inter text-sm sm:text-lg max-w-2xl mx-auto md:mx-0">We honor the outstanding contributions of young investigators and researchers pushing the boundaries of mitochondrial science.</p>
+            <div className="w-12 sm:w-16 h-1 bg-secondary mx-auto rounded-full mb-4 sm:mb-6" />
+            <div className="text-on-surface-variant font-inter text-sm sm:text-lg max-w-2xl mx-auto md:mx-0">We honor the outstanding contributions of young investigators and researchers pushing the boundaries of mitochondrial science.</div>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -451,6 +452,58 @@ export default function Home() {
                   <p className="text-secondary-fixed font-inter text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 max-w-md">Awarded for exceptional communication of innovative research findings during the plenary and thematic sessions.</p>
                </div>
             </motion.div>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* 6. FUNDING PARTNERS SECTION */}
+      <section className="w-full py-12 sm:pb-16 sm:pt-10 px-4 sm:px-6 md:px-12 lg:px-24 bg-surface overflow-hidden">
+        <motion.div 
+          className="max-w-[1280px] mx-auto flex flex-col items-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+        >
+          <motion.div variants={fadeUp} className="text-center mb-10 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-playfair font-semibold text-primary mb-3 sm:mb-4">
+            Supported By
+          </h2>
+          <div className="w-12 sm:w-16 h-1 bg-secondary mx-auto rounded-full mb-4 sm:mb-6" />
+          <p className="text-on-surface-variant font-inter text-sm sm:text-base max-w-2xl mx-auto px-2">
+            We extend our deepest gratitude to the national research councils and agencies whose vital support makes this scientific gathering possible.
+          </p>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 w-full max-w-5xl">
+            {[
+              { name: "Anusandhan National Research Foundation (ANRF)", src: "/logos/anrf.png" },
+              { name: "Department of BioTechnology (DBT)", src: "/logos/dbt.png" },
+              { name: "Indian Council of Medical Research (ICMR)", src: "/logos/icmr.png" },
+              { name: "Council of Scientific and Industrial Research (CSIR)", src: "/logos/csir.png" }
+            ].map((partner, idx) => (
+              <motion.div 
+                key={idx} 
+                variants={fadeUp}
+                className="group bg-white p-6 sm:p-8 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-surface-dim/20 hover:shadow-md transition-all flex flex-col items-center justify-between gap-4 sm:gap-5"
+              >
+                {/* Logo Container */}
+                <div className="relative w-full h-16 sm:h-20 md:h-44 transition-transform duration-300 group-hover:scale-105">
+                  <Image 
+                    src={partner.src} 
+                    alt={partner.name} 
+                    fill 
+                    className="object-contain"
+                  />
+                </div>
+                
+                {/* Partner Name Text */}
+                {/* <h3 className="text-center font-inter text-[11px] sm:text-xs md:text-sm font-medium text-on-surface-variant leading-snug group-hover:text-primary transition-colors">
+                  {partner.name}
+                </h3> */}
+                
+              </motion.div>
+            ))}
           </div>
         </motion.div>
       </section>

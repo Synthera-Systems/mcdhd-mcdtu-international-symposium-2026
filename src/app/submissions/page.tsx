@@ -50,7 +50,8 @@ export default function SubmissionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [successRef, setSuccessRef] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-  
+  const [isDownloaded, setIsDownloaded] = useState(false);
+
   // --- NEW: Dynamic System Configuration States ---
   const [deadlines, setDeadlines] = useState({
     submissionDeadline: "",
@@ -275,12 +276,61 @@ export default function SubmissionsPage() {
               <svg className="w-5 h-5 sm:w-6 sm:h-6 text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
               Submission Rules
             </h3>
+            <p className="font-inter text-xs sm:text-sm text-on-surface-variant mb-4">
+              All abstracts must be formatted using the official symposium template.
+            </p>
+              
+            {/* Download Template Button Area */}
+            <div className="mb-6 pb-6 border-b border-surface-dim/50 flex flex-col items-center text-center">
+              <a 
+                href="/abstract-submission-template.docx" 
+                download="Abstract_Template_Mitochondria_Symposium.docx"
+                onClick={() => {
+                  setIsDownloaded(true);
+                  setTimeout(() => setIsDownloaded(false), 3000);
+                }}
+                className={`inline-flex items-center justify-center gap-2 font-inter font-semibold text-sm px-5 py-3 rounded-xl transition-all duration-300 min-w-[280px] ${
+                  isDownloaded
+                    ? "bg-green-50 text-green-600 border border-green-200 pointer-events-none"
+                    : "bg-secondary/10 text-secondary hover:bg-secondary hover:text-white border border-secondary/20 shadow-sm"
+                }`}
+              >
+                <AnimatePresence mode="wait">
+                  {isDownloaded ? (
+                    <motion.div
+                      key="success"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      className="flex items-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                      Downloaded Successfully
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="download"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-center gap-2"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                      Download Abstract Template (DOCX)
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </a>
+            </div>
+
             <ul className="space-y-4 sm:space-y-5">
               {[
-                "Abstracts must be submitted in English and should not exceed 350 words in total.",
-                "The study must represent original research not previously published in a major journal.",
-                "All authors must have consented to the submission and presentation of the data.",
-                "Scientific notation should be maintained using standard nomenclature."
+                "Abstracts must be submitted in English and adhere to a strict maximum of 500 words.",
+                "Submissions must be confined within a single-page limit.",
+                "References must be indicated in the text in brackets and listed at the end of the document.",
+                "Figures and tables (if any) should be placed immediately preceding the references list.",
+                "Include a maximum of 4 keywords to describe your research.",
+                "Final documents must be uploaded in Microsoft Word (.doc/.docx) or PDF format."
               ].map((rule, idx) => (
                 <li key={idx} className="flex items-start gap-3 sm:gap-4 font-inter text-xs sm:text-sm text-on-surface-variant leading-relaxed">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-container shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -290,7 +340,7 @@ export default function SubmissionsPage() {
             </ul>
           </motion.div>
 
-          {/* UPDATED: Dynamic Key Deadlines container layout */}
+          {/* Dynamic Key Deadlines container layout */}
           <motion.div variants={fadeUp} className="bg-primary-container p-6 sm:p-8 rounded-2xl shadow-xl relative overflow-hidden text-left">
             <div className="absolute -bottom-6 -right-6 opacity-10">
               <svg className="w-40 h-40 sm:w-48 sm:h-48 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>

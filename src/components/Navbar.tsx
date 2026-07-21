@@ -21,6 +21,7 @@ export default function Navbar() {
     { name: "Committee", href: "/committee" },
     { name: "Sponsor", href: "/sponsor" },
     { name: "Submissions", href: "/submissions" },
+    { name: "Venue", href: "/venue" },
     { name: "Admin", href: "/admin" },
   ];
 
@@ -120,7 +121,6 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
-                // Added max-w bounds to prevent bleeding out on ultra narrow screens (e.g. 300px)
                 className="absolute top-full right-0 mt-3 w-[calc(100vw-2rem)] sm:w-56 max-w-[280px] bg-white border border-surface-dim/30 rounded-2xl shadow-[0_8px_30px_rgba(0,33,71,0.12)] p-2 sm:p-3 flex flex-col gap-1 z-50 origin-top-right"
               >
                 {navLinks.map((link) => {
