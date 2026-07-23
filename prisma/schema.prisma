@@ -78,14 +78,15 @@ model Submission {
 }
 
 model SystemSettings {
-  id                  Int      @id @default(1) // Enforces single-row configuration
-  symposiumDates      String   @default("")
-  submissionDeadline  String   @default("")
-  notificationDate    String   @default("")
-  accountName         String   @default("")
-  bankName            String   @default("")
-  accountNumber       String   @default("")
-  ifscCode            String   @default("")
-  upiQrUrl            String   @default("") 
-  updatedAt           DateTime @updatedAt
+  id                        Int      @id @default(1)
+  symposiumDates            String   @default("")
+  earlyRegistrationDeadline String   @default("")
+  lateRegistrationDeadline  String   @default("")
+  notificationDate          String   @default("")
+  accountName               String   @default("")
+  bankName                  String   @default("")
+  accountNumber             String   @default("")
+  ifscCode                  String   @default("")
+  upiQrUrl                  String   @default("") 
+  updatedAt                 DateTime @updatedAt
 }

@@ -3,6 +3,7 @@
 import { motion, Variants, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
 const springInteraction = {
@@ -32,6 +33,13 @@ const formatDate = (dateStr: string, fallback: string) => {
   });
 };
 
+// Fetcher function for settings API
+const fetchSystemSettings = async () => {
+  const res = await fetch("/api/settings");
+  if (!res.ok) throw new Error("Failed to load settings");
+  return res.json();
+};
+
 export default function SubmissionsPage() {
   // --- Form State ---
   const [formData, setFormData] = useState({ 
@@ -50,32 +58,45 @@ export default function SubmissionsPage() {
   const [error, setError] = useState<string | null>(null);
   const [successRef, setSuccessRef] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [isDownloaded, setIsDownloaded] = useState(false);
 
-  // --- NEW: Dynamic System Configuration States ---
-  const [deadlines, setDeadlines] = useState({
-    submissionDeadline: "",
-    notificationDate: ""
+  // --- React Query for Deadlines & System Settings ---
+  const { data: settings, isLoading: loadingDeadlines } = useQuery({
+    queryKey: ["systemSettings"],
+    queryFn: fetchSystemSettings,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
   });
-  const [loadingDeadlines, setLoadingDeadlines] = useState(true);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Load configuration options from DB
-  useEffect(() => {
-    fetch("/api/settings")
-      .then((res) => res.json())
-      .then((data) => {
-        if (!data.error) {
-          setDeadlines({
-            submissionDeadline: data.submissionDeadline || "",
-            notificationDate: data.notificationDate || ""
-          });
-        }
-      })
-      .catch((err) => console.error("Error loading timelines:", err))
-      .finally(() => setLoadingDeadlines(false));
-  }, []);
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+  
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+  
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      // Reuse your existing validation logic!
+      const fakeEvent = {
+        target: { files }
+      } as unknown as React.ChangeEvent<HTMLInputElement>;
+      
+      handleFileChange(fakeEvent);
+    }
+  };
 
   // Auto-scroll to top on success
   useEffect(() => {
@@ -103,14 +124,13 @@ export default function SubmissionsPage() {
       return;
     }
 
-    const validTypes = [
-      'application/pdf', 
+    const validTypes = [ 
       'application/msword', 
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
     ];
     
     if (!validTypes.includes(file.type)) {
-      setError("Invalid file format. Only PDF, DOC, or DOCX are allowed.");
+      setError("Invalid file format. Only DOC, or DOCX are allowed.");
       setAbstractFile(null);
       return;
     }
@@ -250,9 +270,10 @@ export default function SubmissionsPage() {
         animate="visible"
         variants={staggerContainer}
       >
-        <motion.p variants={fadeUp} className="text-secondary-container font-inter font-bold tracking-widest text-[10px] sm:text-xs uppercase mb-3 sm:mb-4">
+        {/* <motion.p variants={fadeUp} className="text-secondary-container font-inter font-bold tracking-widest text-[10px] sm:text-xs uppercase mb-3 sm:mb-4">
           Scientific Inquiry
-        </motion.p>
+        </motion.p> */}
+        <motion.div variants={fadeUp} className="w-10 sm:w-12 h-1 bg-secondary mb-4 sm:mb-6" />
         <motion.h1 variants={fadeUp} className="text-3xl sm:text-4xl md:text-6xl font-playfair font-bold text-primary mb-4 sm:mb-6 leading-tight">
           Call for Abstracts
         </motion.h1>
@@ -325,12 +346,12 @@ export default function SubmissionsPage() {
 
             <ul className="space-y-4 sm:space-y-5">
               {[
-                "Abstracts must be submitted in English and adhere to a strict maximum of 500 words.",
+                "Abstracts must be submitted in English and adhere to a strict maximum of 350 words.",
                 "Submissions must be confined within a single-page limit.",
                 "References must be indicated in the text in brackets and listed at the end of the document.",
                 "Figures and tables (if any) should be placed immediately preceding the references list.",
                 "Include a maximum of 4 keywords to describe your research.",
-                "Final documents must be uploaded in Microsoft Word (.doc/.docx) or PDF format."
+                "Final documents must be uploaded in Microsoft Word (.doc/.docx) format."
               ].map((rule, idx) => (
                 <li key={idx} className="flex items-start gap-3 sm:gap-4 font-inter text-xs sm:text-sm text-on-surface-variant leading-relaxed">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5 text-secondary-container shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
@@ -343,24 +364,40 @@ export default function SubmissionsPage() {
           {/* Dynamic Key Deadlines container layout */}
           <motion.div variants={fadeUp} className="bg-primary-container p-6 sm:p-8 rounded-2xl shadow-xl relative overflow-hidden text-left">
             <div className="absolute -bottom-6 -right-6 opacity-10">
-              <svg className="w-40 h-40 sm:w-48 sm:h-48 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              <svg className="w-40 h-40 sm:w-48 sm:h-48 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
             </div>
             <div className="relative z-10 w-full">
-              <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-1.5 sm:mb-2">Key Deadlines</h3>
-              <p className="font-inter text-inverse-primary text-xs sm:text-sm mb-6 sm:mb-8">Mark your calendars for clinical review phases.</p>
+              <h3 className="font-playfair text-xl sm:text-2xl font-bold text-white mb-4 sm:mb-5">Key Deadlines</h3>
               
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex justify-between items-center pb-3 sm:pb-4 border-b border-white/10 min-h-9">
-                  <span className="font-inter text-xs sm:text-sm font-medium text-white">Submission Deadline</span>
+                {/* Early Registration Deadline */}
+                <div className="flex justify-between items-center pb-3 border-b border-white/10 min-h-9">
+                  <span className="font-inter text-xs sm:text-sm font-medium text-white">Early Registration</span>
                   {loadingDeadlines ? (
                     <div className="h-4 w-20 bg-white/20 rounded animate-pulse" />
                   ) : (
                     <span className="font-inter text-xs sm:text-sm font-bold text-secondary-container">
-                      {formatDate(deadlines.submissionDeadline, "Oct 15, 2026")}
+                      {formatDate(settings?.earlyRegistrationDeadline, "Sep 30, 2026")}
                     </span>
                   )}
                 </div>
-                <div className="flex justify-between items-center pt-1.5 sm:pt-2 min-h-6">
+
+                {/* Late Registration & Abstract Submission */}
+                <div className="flex justify-between items-center pb-3 border-b border-white/10 min-h-9">
+                  <span className="font-inter text-xs sm:text-sm font-medium text-white">Late Registration & Abstract Submission</span>
+                  {loadingDeadlines ? (
+                    <div className="h-4 w-20 bg-white/20 rounded animate-pulse" />
+                  ) : (
+                    <span className="font-inter text-xs sm:text-sm font-bold text-white">
+                      {formatDate(settings?.lateRegistrationDeadline, "Oct 15, 2026")}
+                    </span>
+                  )}
+                </div>
+
+                {/* Review Notification Date */}
+                {/* <div className="flex justify-between items-center pt-1 min-h-6">
                   <span className="font-inter text-xs sm:text-sm font-medium text-white">Notification Date</span>
                   {loadingDeadlines ? (
                     <div className="h-4 w-20 bg-white/20 rounded animate-pulse" />
@@ -369,7 +406,7 @@ export default function SubmissionsPage() {
                       {formatDate(deadlines.notificationDate, "Nov 01, 2026")}
                     </span>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           </motion.div>
@@ -537,25 +574,56 @@ export default function SubmissionsPage() {
 
                   {/* File Upload Zone */}
                   <div className="space-y-1.5 sm:space-y-2 pt-1 text-left">
-                    <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">Abstract Document</label>
-                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                    <label className="font-inter text-[10px] sm:text-xs font-bold text-on-surface-variant uppercase tracking-wide">
+                      Abstract Document
+                    </label>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleFileChange} 
+                      className="hidden" 
+                      accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" 
+                    />
                     <div 
                       onClick={() => fileInputRef.current?.click()}
-                      className={`w-full border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center gap-3 sm:gap-4 transition-colors cursor-pointer group ${abstractFile ? 'border-secondary bg-secondary/5' : 'border-surface-dim/80 hover:border-secondary/50 bg-surface-bright/50'}`}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      className={`w-full border-2 border-dashed rounded-xl p-6 sm:p-10 flex flex-col items-center justify-center gap-3 sm:gap-4 transition-all duration-200 cursor-pointer group ${
+                        isDragging 
+                          ? 'border-secondary bg-secondary/15 scale-[1.01]' 
+                          : abstractFile 
+                            ? 'border-secondary bg-secondary/5' 
+                            : 'border-surface-dim/80 hover:border-secondary/50 bg-surface-bright/50'
+                      }`}
                     >
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors ${abstractFile ? 'bg-secondary text-white' : 'bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white'}`}>
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors ${
+                        isDragging || abstractFile 
+                          ? 'bg-secondary text-white' 
+                          : 'bg-secondary/10 text-secondary group-hover:bg-secondary group-hover:text-white'
+                      }`}>
                         {abstractFile ? (
-                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
                         ) : (
-                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                          <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                          </svg>
                         )}
                       </div>
                       <div className="text-center font-inter px-2 w-full">
-                        <p className={`text-xs sm:text-sm font-medium mb-1 truncate w-full ${abstractFile ? 'text-secondary font-bold' : 'text-primary'}`}>
-                          {abstractFile ? abstractFile.name : <><span className="font-bold text-secondary">Click to upload</span> <br className="block sm:hidden" /> or drag and drop</>}
+                        <p className={`text-xs sm:text-sm font-medium mb-1 truncate w-full ${isDragging || abstractFile ? 'text-secondary font-bold' : 'text-primary'}`}>
+                          {isDragging ? (
+                            "Drop file to upload"
+                          ) : abstractFile ? (
+                            abstractFile.name
+                          ) : (
+                            <><span className="font-bold text-secondary">Click to upload</span> <br className="block sm:hidden" /> or drag and drop</>
+                          )}
                         </p>
                         <p className="text-[10px] sm:text-xs text-on-surface-variant tracking-widest uppercase mt-1.5 sm:mt-0">
-                          {abstractFile ? `${(abstractFile.size / 1024 / 1024).toFixed(2)} MB` : 'Word or PDF (Max 10MB)'}
+                          {abstractFile ? `${(abstractFile.size / 1024 / 1024).toFixed(2)} MB` : 'Word/docx (Max 10MB)'}
                         </p>
                       </div>
                     </div>

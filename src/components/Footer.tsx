@@ -65,7 +65,7 @@ export default function Footer() {
           {/* Column 1: Brand & Mission */}
           <div className="md:col-span-5 space-y-4 sm:space-y-6 pr-0 md:pr-8 text-left flex flex-col items-start">
             <div className="flex gap-3 justify-start">
-              <div className="relative w-10 h-10 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0 bg-white shadow-inner">
+              <div className="relative w-10 h-10 sm:w-25 sm:h-25 rounded-full overflow-hidden shrink-0 bg-white shadow-inner">
                 <Image 
                   src='/logos/TU.png'
                   alt='Tezpur University' 
@@ -74,7 +74,7 @@ export default function Footer() {
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 /> 
               </div>
-              <div className="relative w-10 h-10 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0 bg-white shadow-inner">
+              {/* <div className="relative w-10 h-10 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0 bg-white shadow-inner">
                 <Image 
                   src='/logos/JNUN.png'
                   alt='JNU New Delhi' 
@@ -82,7 +82,7 @@ export default function Footer() {
                   className="object-cover transition-transform duration-500 hover:scale-105"
                   onError={(e) => { e.currentTarget.style.display = 'none'; }}
                 /> 
-              </div>
+              </div> */}
             </div>
             
             <div className="space-y-1 sm:space-y-2 text-left">

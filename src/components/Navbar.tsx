@@ -31,7 +31,7 @@ export default function Navbar() {
         
         <div className="flex gap-2 sm:gap-3 items-center justify-center">
           <Link href="/" className="flex items-center gap-1.5 sm:gap-2">
-          <div className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden shrink-0 bg-surface-bright shadow-inner">
+          <div className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-15 md:h-15 rounded-full overflow-hidden shrink-0 bg-surface-bright shadow-inner">
             <Image 
               src='/logos/TU.png'
               alt='Tezu' 
@@ -40,7 +40,7 @@ export default function Navbar() {
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             /> 
           </div>
-          <div className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden shrink-0 bg-surface-bright shadow-inner">
+          {/* <div className="relative w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full overflow-hidden shrink-0 bg-surface-bright shadow-inner">
             <Image 
               src='/logos/JNUN.png'
               alt='JNUN' 
@@ -48,10 +48,10 @@ export default function Navbar() {
               className="object-cover transition-transform duration-500 group-hover:scale-105"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             /> 
-          </div>
+          </div> */}
           {/* Brand */}
           <motion.div {...springInteraction}>
-              <span className="font-playfair font-bold text-[13px] sm:text-lg md:text-xl tracking-tight text-primary leading-none block max-w-60 sm:max-w-none whitespace-normal sm:whitespace-nowrap">
+              <span className="font-playfair font-bold text-[13px] sm:text-lg md:text-2xl tracking-tight text-primary leading-none block max-w-60 sm:max-w-none whitespace-normal sm:whitespace-nowrap">
                 MitoCan-Symposium <br className="block sm:hidden" /> 2026
               </span>
           </motion.div>

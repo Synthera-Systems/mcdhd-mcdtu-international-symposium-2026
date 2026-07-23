@@ -96,16 +96,16 @@ export default function CommitteePage() {
       <div className="flex flex-col flex-grow">
         {/* Used flex-wrap so the badge falls below the name on 300px widths if the name is too long */}
         <div className="flex flex-wrap justify-between items-start gap-1.5 sm:gap-2 mb-1 sm:mb-1.5">
-            <h3 className="font-playfair text-base sm:text-lg font-bold text-primary leading-tight">
+            <h3 className="font-playfair text-base sm:text-xl font-bold text-primary leading-tight">
               {member.name}
             </h3>
             {showRole && member.role && (
-                <span className="shrink-0 text-[8px] sm:text-[9px] font-bold tracking-widest text-secondary-container uppercase bg-secondary/10 px-2 py-1 rounded-full">
+                <span className="shrink-0 text-[8px] sm:text-[9px] font-bold tracking-widest text-secondary uppercase bg-secondary/10 px-2 py-1 rounded-full">
                     {member.role}
                 </span>
             )}
         </div>
-        <p className="font-inter text-[11px] sm:text-xs text-on-surface-variant leading-relaxed">
+        <p className="font-inter text-[11px] sm:text-sm text-on-surface-variant leading-relaxed">
           {member.affiliation}
         </p>
       </div>

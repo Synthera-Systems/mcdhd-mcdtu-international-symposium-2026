@@ -37,10 +37,10 @@ const getInitials = (name: string) => {
 const speakersData = [
   { name: "Prof. Raymond B. Birge", affiliation: "Rutgers School of Biomedical and Health Sciences, Newark, USA", image: "/speakers/raymond-birge.png" },
   { name: "Prof. Dhyan Chandra", affiliation: "Roswell Park Comprehensive Cancer Center, New York, USA", image: "/speakers/dhyan-chandra.png" },
-  { name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/jerry-chipuk.png" },
+  // { name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/jerry-chipuk.png" },
   { name: "Prof. Gokul Das", affiliation: "Roswell Park Comprehensive Cancer Center, USA", image: "/speakers/gokul.png" },
   { name: "Prof. Ajay Singh", affiliation: "Mitchell Cancer Institute, Alabama, USA", image: "/speakers/ajay.png" },
-  { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, Denver, USA", image: "/speakers/rajesh-agarwal.png" },
+  // { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, Denver, USA", image: "/speakers/rajesh-agarwal.png" },
   { name: "Prof. C.V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/cv-rao.png" },
   // { name: "Prof. Natasha Kyprianou", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/natasha-kyprianou.png" },
   { name: "Prof. R. P. Singh", affiliation: "Gautam Buddha University, Noida, India", image: "/speakers/rp-singh.png" },
@@ -70,6 +70,10 @@ const speakersData = [
   { name: "Dr. Dhanendra Tomar", affiliation: "Wake Forest University, Winston-Salem, USA", image: "/speakers/dhanendra-tomar.png" }
 ];
 
+const keyspeakersData = [
+  { name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/jerry-chipuk.png" },
+];
+
 export default function SpeakersPage() {
   return (
     <div className="w-full min-h-screen bg-surface pt-8 sm:pt-12 pb-16 sm:pb-24 px-4 sm:px-6 md:px-12 lg:px-24">
@@ -90,9 +94,87 @@ export default function SpeakersPage() {
         </motion.p>
       </motion.div>
 
+      {/* Keynote Speakers */}
+      <motion.div 
+        className="max-w-[1280px] mx-auto mb-10 sm:mb-10"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
+        <motion.h2 variants={fadeUp} className="text-2xl sm:text-2xl md:text-4xl font-playfair font-bold text-primary mb-3 sm:mb-6 leading-tight">
+          Keynote Speakers
+        </motion.h2>
+      </motion.div>
+
+      <motion.div 
+        className="max-w-[1280px] mx-auto grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-16"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
+        {keyspeakersData.map((speaker, idx) => (
+          <motion.div 
+            key={idx} 
+            variants={fadeUp}
+            {...springInteraction}
+            className="group flex flex-col bg-white rounded-2xl overflow-hidden border border-surface-dim/30 shadow-[0_4px_20px_rgba(0,33,71,0.03)] hover:shadow-[0_8px_30px_rgba(0,33,71,0.08)] cursor-default"
+          >
+            {/* Image Container with Fallback */}
+            <div className="aspect-[4/5] w-full relative bg-primary-container overflow-hidden group">
+              {/* 1. Fallback Background & Initials */}
+              <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary-container to-primary">
+                <span className="font-playfair text-4xl sm:text-5xl font-semibold text-white/20 tracking-widest">
+                  {getInitials(speaker.name)}
+                </span>
+              </div>
+              
+              {/* 2. Speaker Image (Removed mix-blend and opacity) */}
+              <Image 
+                src={speaker.image} 
+                alt={speaker.name} 
+                fill 
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                onError={(e) => {
+                  // Fallback if image doesn't exist yet
+                  e.currentTarget.style.display = 'none';
+                }}
+              /> 
+              
+              {/* 3. Decorative overlay line (Added z-10 so it sits above the image) */}
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-secondary translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-10" />
+            </div>
+
+            {/* Profile Info */}
+            <div className="p-4 sm:p-5 md:p-6 flex flex-col flex-grow bg-white">
+              <h3 className="font-playfair text-base sm:text-lg font-bold text-primary mb-1.5 sm:mb-2 leading-tight">
+                {speaker.name}
+              </h3>
+              <p className="font-inter text-[10px] sm:text-xs font-medium text-secondary-container uppercase tracking-wide mb-1.5 sm:mb-2 line-clamp-1">
+                {speaker.affiliation.split(',').pop()?.trim() || "USA"}
+              </p>
+              <p className="font-inter text-xs sm:text-sm text-on-surface-variant leading-snug line-clamp-3">
+                {speaker.affiliation}
+              </p>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+
+      <motion.div 
+        className="max-w-[1280px] mx-auto mb-10 sm:mb-10"
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+      >
+        <motion.h2 variants={fadeUp} className="text-2xl sm:text-2xl md:text-4xl font-playfair font-bold text-primary mb-3 sm:mb-6 leading-tight">
+          Distinguished Panel
+        </motion.h2>
+      </motion.div>
+
       {/* Roster Grid */}
       <motion.div 
-        className="max-w-[1280px] mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
+        className="max-w-[1280px] mx-auto grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
         initial="hidden"
         animate="visible"
         variants={staggerContainer}

@@ -48,7 +48,7 @@ export default function SponsorsPage() {
       features: [
         "10-Minute Talk/Presentation in the Symposium",
         "Dedicated Exhibition / Stall space",
-        "Premium Advertisement placement in the Abstract Book"
+        "Advertisement placement in the Abstract Book"
       ], 
       popular: true 
     }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -22,6 +23,12 @@ const staggerContainer = {
   visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
 };
 
+const fetchSystemSettings = async () => {
+  const res = await fetch("/api/settings");
+  if (!res.ok) throw new Error("Failed to fetch system settings");
+  return res.json();
+};
+
 const associationLogos = [
   { name: "Rutgers Health", src: "/logos/rutgers.png" },
   { name: "Roswell Park Comprehensive Cancer Center", src: "/logos/roswell.png" },
@@ -29,23 +36,17 @@ const associationLogos = [
   { name: "Cachar Cancer Hospital & Research Centre", src: "/logos/cachar.png" },
   { name: "Excellence Christ Service", src: "/logos/christ.png" },
   { name: "JNU. New Delhi", src: "/logos/jnu.png" },
+  { name: "JNU Pair Network", src: "/logos/JNUN.png" }
 ];
 
 export default function Home() {
-  const [symposiumDates, setSymposiumDates] = useState("");
-  const [loading, setLoading] = useState(true); // ADDED: Loading context flag
+  const { data: settings, isLoading } = useQuery({
+    queryKey: ["systemSettings"],
+    queryFn: fetchSystemSettings,
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
 
-  useEffect(() => {
-    fetch("/api/settings")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.symposiumDates) {
-          setSymposiumDates(data.symposiumDates);
-        }
-      })
-      .catch((err) => console.error("Error loading layout settings:", err))
-      .finally(() => setLoading(false)); // ADDED: Kill loading loop on resolution
-  }, []);
+  const symposiumDates = settings?.symposiumDates ?? "";
 
   return (
     <main className="flex flex-col w-full min-h-screen">
@@ -72,7 +73,7 @@ export default function Home() {
           variants={staggerContainer}
         >
           {/* UPDATED: Dynamic / Loading Date Pill */}
-          {loading ? (
+          {isLoading ? (
             <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary/10 border border-secondary/30 text-on-primary backdrop-blur-sm animate-pulse w-48 sm:w-56 h-9 sm:h-10">
               <div className="w-3.5 h-3.5 rounded-full bg-blue-400/40 shrink-0" />
               <div className="h-3.5 bg-white/20 rounded w-full" />
@@ -89,7 +90,7 @@ export default function Home() {
             International Symposium on Mitochondria, Cell Death, and Human Disease
           </motion.h1>
           
-          <motion.p variants={fadeUp} className="text-xl sm:text-lg md:text-3xl text-on-primary font-playfair italic max-w-4xl font-semibold px-2">
+          <motion.p variants={fadeUp} className="text-xl sm:text-lg md:text-4xl text-on-primary font-playfair italic max-w-5xl font-semibold px-2">
             Recent Advances in Cancer Research and Clinical Translation
           </motion.p>
 
@@ -270,9 +271,9 @@ export default function Home() {
           {/* Patrons Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-12">
             {[
-              { role: "Chief Patron", name: "Prof. Amarendra Kr. Das", img: "/convenors/amrendra.png" , title: "Pro Vice Chancellor", org: "Tezpur University", badgeDesign:"bg-secondary/20 border border-secondary/80 px-3 sm:px-4 py-1.5 rounded-full mb-2" },
-              { role: "Patron", name: "Prof. Ashim Jyoti Thakur", img: "/convenors/ashim.png" , title: "Dean, Academic Affairs", org: "Tezpur University", badgeDesign:"" },
-              { role: "Patron", name: "Prof. Nayandeep Deka Baruah", img: "/convenors/nayandeep.png" , title: "Dean, School of Sciences", org: "Tezpur University", badgeDesign:"" }
+              { role: "Chief Patron", name: "Prof. Amarendra Kr. Das", img: "/convenors/amrendra.png" , title: "Pro Vice Chancellor", org: "Tezpur University, India", badgeDesign:"bg-secondary/20 border border-secondary/80 px-3 sm:px-4 py-1.5 rounded-full mb-2" },
+              { role: "Patron", name: "Prof. Ashim Jyoti Thakur", img: "/convenors/ashim.png" , title: "Dean, Academic Affairs", org: "Tezpur University, India", badgeDesign:"" },
+              { role: "Patron", name: "Prof. Nayandeep Deka Baruah", img: "/convenors/nayandeep.png" , title: "Dean, School of Sciences", org: "Tezpur University, India", badgeDesign:"" }
             ].map((person, idx) => (
               <motion.div key={idx} variants={fadeUp} className="group bg-surface-bright border border-surface-dim/30 p-6 sm:p-8 rounded-2xl flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow">
                 <span className="text-[9px] sm:text-[10px] font-bold tracking-widest text-secondary uppercase bg-secondary/10 px-3 py-1 rounded-full mb-4">{person.role}</span>
@@ -287,9 +288,9 @@ export default function Home() {
                   /> 
                 </div>
 
-                <h3 className="text-base sm:text-lg font-playfair font-bold text-primary mb-1">{person.name}</h3>
-                <p className={`text-xs sm:text-sm font-medium text-on-surface-variant ${person.badgeDesign}`}>{person.title}</p>
-                <p className="text-[10px] sm:text-xs text-secondary mt-1">{person.org}</p>
+                <h3 className="text-base sm:text-2xl font-playfair font-bold text-primary mb-1">{person.name}</h3>
+                <p className={`text-xs sm:text-lg font-medium text-on-surface-variant ${person.badgeDesign}`}>{person.title}</p>
+                <p className="text-[10px] sm:text-lg text-secondary mt-1">{person.org}</p>
               </motion.div>
             ))}
           </div>
@@ -313,13 +314,13 @@ export default function Home() {
               /> 
             </div>
 
-            <h3 className="text-base sm:text-lg font-playfair font-bold text-primary mb-1 whitespace-normal sm:whitespace-nowrap">
+            <h3 className="text-base sm:text-2xl font-playfair font-bold text-primary mb-1 whitespace-normal sm:whitespace-nowrap">
               Prof. Anand Shankar Ramteke
             </h3>
-            <p className="text-xs sm:text-sm font-medium text-on-surface-variant max-w-[200px] sm:max-w-none">
-              Professor, MBBT Department
+            <p className="text-xs sm:text-lg font-medium text-on-surface-variant max-w-[200px] sm:max-w-none">
+              Dept. Molecular Biology and Biotechnology
             </p>
-            <p className="text-[10px] sm:text-xs text-secondary mt-1">Tezpur University</p>
+            <p className="text-[10px] sm:text-lg text-secondary mt-1">Tezpur University, India</p>
           </motion.div>
 
           {/* <motion.div variants={fadeUp} className="group flex flex-col items-center bg-primary text-white rounded-2xl p-6 sm:p-8 mb-12 sm:mb-16 shadow-lg text-center max-w-3xl mx-auto border border-primary-container">
@@ -475,12 +476,13 @@ export default function Home() {
           </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 w-full max-w-5xl">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 w-full max-w-7xl">
             {[
               { name: "Anusandhan National Research Foundation (ANRF)", src: "/logos/anrf.png" },
               { name: "Department of BioTechnology (DBT)", src: "/logos/dbt.png" },
               { name: "Indian Council of Medical Research (ICMR)", src: "/logos/icmr.png" },
-              { name: "Council of Scientific and Industrial Research (CSIR)", src: "/logos/csir.png" }
+              { name: "Council of Scientific and Industrial Research (CSIR)", src: "/logos/csir.png" },
+              { name: "JNU Pair Network", src: "/logos/JNUN.png" }
             ].map((partner, idx) => (
               <motion.div 
                 key={idx} 

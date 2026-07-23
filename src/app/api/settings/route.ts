@@ -46,23 +46,32 @@ export async function PUT(request: Request) {
     }
 
     const body = await request.json();
-    
-    const updatedSettings = await prisma.systemSettings.update({
+
+    const dataPayload = {
+      symposiumDates: body.symposiumDates ?? "",
+      earlyRegistrationDeadline: body.earlyRegistrationDeadline ?? "",
+      lateRegistrationDeadline: body.lateRegistrationDeadline ?? "",
+      notificationDate: body.notificationDate ?? "",
+      accountName: body.accountName ?? "",
+      bankName: body.bankName ?? "",
+      accountNumber: body.accountNumber ?? "",
+      ifscCode: body.ifscCode ?? "",
+      upiQrUrl: body.upiQrUrl ?? "",
+    };
+
+    // Use UPSERT so row id: 1 is created if missing
+    const updatedSettings = await prisma.systemSettings.upsert({
       where: { id: 1 },
-      data: {
-        symposiumDates: body.symposiumDates,
-        submissionDeadline: body.submissionDeadline,
-        notificationDate: body.notificationDate,
-        accountName: body.accountName,
-        bankName: body.bankName,
-        accountNumber: body.accountNumber,
-        ifscCode: body.ifscCode,
-        upiQrUrl: body.upiQrUrl,
+      update: dataPayload,
+      create: {
+        id: 1,
+        ...dataPayload,
       },
     });
 
     return NextResponse.json(updatedSettings);
   } catch (error) {
+    console.error("Settings PUT Error:", error); // Added log to see exact Prisma errors in dev server
     return NextResponse.json({ error: "Failed to update internal settings map." }, { status: 500 });
   }
 }

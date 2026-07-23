@@ -3,9 +3,10 @@
 interface TopBarProps {
   activeTab: string;
   adminUser: { name: string; role: string } | null;
+  onMenuClick: () => void; // 👈 Added
 }
 
-export default function AdminTopBar({ activeTab, adminUser }: TopBarProps) {
+export default function AdminTopBar({ activeTab, adminUser, onMenuClick }: TopBarProps) {
   const getTitle = () => {
     if (activeTab === "HOME") return "Dashboard";
     if (activeTab === "APPROVALS") return "Pending Approvals";
@@ -15,9 +16,14 @@ export default function AdminTopBar({ activeTab, adminUser }: TopBarProps) {
   };
 
   return (
-    <header className="h-24 bg-surface flex items-center justify-between px-8 lg:px-10 shrink-0 border-b border-surface-dim/30 z-50 relative">
+    <header className="h-24 bg-surface flex items-center justify-between px-8 lg:px-10 shrink-0 border-b border-surface-dim/30 z-30 relative">
       <div className="flex items-center gap-4">
-        <button className="md:hidden p-2 -ml-2 rounded-lg hover:bg-surface-bright text-primary cursor-pointer transition-colors">
+        {/* 👇 Attached onClick handler */}
+        <button 
+          onClick={onMenuClick}
+          className="md:hidden p-2 -ml-2 rounded-lg hover:bg-surface-bright text-primary cursor-pointer transition-colors"
+          aria-label="Toggle Navigation Menu"
+        >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
         </button>
         <h2 className="font-playfair text-3xl font-bold text-primary tracking-tight">

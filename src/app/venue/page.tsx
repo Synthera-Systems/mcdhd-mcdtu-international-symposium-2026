@@ -21,47 +21,71 @@ const staggerContainer: Variants = {
 export default function VenuePage() {
     const mapLink = "https://maps.app.goo.gl/oPrpjk8Gwcw1LveE6";
     const attractions = [
-    {
-      title: "Kaziranga National Park",
-      subtitle: "A UNESCO World Heritage Site",
-      description: "Just a scenic journey from the campus, Kaziranga offers an unparalleled glimpse into the wild. Famous for harboring two-thirds of the world's great one-horned rhinoceroses, its sprawling marshlands and tall elephant grass provide thrilling safari experiences.",
-      image: "/images/kaziranga.png",
-      orientation: "left",
-      number: "01"
-    },
-    {
-      title: "Agnigarh",
-      subtitle: "The Fortress of Fire",
-      description: "Overlooking the majestic Brahmaputra river, this ancient hillock is steeped in Hindu mythology. Legend says it was built to isolate Princess Usha, offering today's visitors panoramic views of the city and a walk through ancient romance.",
-      image: "/images/agnigarh.png",
-      orientation: "right",
-      number: "02"
-    },
-    {
-      title: "Nameri National Park",
-      subtitle: "The Foothill Haven",
-      description: "Nestled in the lush foothills of the Eastern Himalayas along the Jia Bhoroli river. A pristine haven for wildlife and bird watchers, offering scenic guided jungle treks and thrilling river rafting just a short drive away.",
-      image: "/images/nameri.png",
-      orientation: "left",
-      number: "03"
-    },
-    {
-      title: "Mahabhairab Temple",
-      subtitle: "Ancient Spiritual Retreat",
-      description: "An ancient Shiva temple situated atop a small hillock in the heart of the city. Originally established by the mythical King Bana, it offers a serene spiritual retreat with magnificent traditional architecture and deep mythological roots.",
-      image: "/images/mahabhairab.png",
-      orientation: "right",
-      number: "04"
-    },
-    {
-      title: "Chitralekha Udyan",
-      subtitle: "Historic Sculptural Ruins",
-      description: "A beautifully landscaped park featuring a mesmerizing horseshoe-shaped lake and ancient sculptural ruins dating back to the 9th century. A perfect evening stroll to soak in the historical ambiance of Assam.",
-      image: "/images/colepark.png",
-      orientation: "left",
-      number: "05"
-    }
-  ];
+      {
+        title: "Kaziranga National Park",
+        subtitle: "A UNESCO World Heritage Site",
+        description: "Just a scenic journey from the campus, Kaziranga offers an unparalleled glimpse into the wild. Famous for harboring two-thirds of the world's great one-horned rhinoceroses, its sprawling marshlands and tall elephant grass provide thrilling safari experiences.",
+        image: "/images/kaziranga.png",
+        orientation: "left",
+        number: "01"
+      },
+      {
+        title: "Agnigarh",
+        subtitle: "The Fortress of Fire",
+        description: "Overlooking the majestic Brahmaputra river, this ancient hillock is steeped in Hindu mythology. Legend says it was built to isolate Princess Usha, offering today's visitors panoramic views of the city and a walk through ancient romance.",
+        image: "/images/agnigarh.png",
+        orientation: "right",
+        number: "02"
+      },
+      {
+        title: "Nameri National Park",
+        subtitle: "The Foothill Haven",
+        description: "Nestled in the lush foothills of the Eastern Himalayas along the Jia Bhoroli river. A pristine haven for wildlife and bird watchers, offering scenic guided jungle treks and thrilling river rafting just a short drive away.",
+        image: "/images/nameri.png",
+        orientation: "left",
+        number: "03"
+      },
+      {
+        title: "Mahabhairab Temple",
+        subtitle: "Ancient Spiritual Retreat",
+        description: "An ancient Shiva temple situated atop a small hillock in the heart of the city. Originally established by the mythical King Bana, it offers a serene spiritual retreat with magnificent traditional architecture and deep mythological roots.",
+        image: "/images/mahabhairab.png",
+        orientation: "right",
+        number: "04"
+      },
+      {
+        title: "Chitralekha Udyan",
+        subtitle: "Historic Sculptural Ruins",
+        description: "A beautifully landscaped park featuring a mesmerizing horseshoe-shaped lake and ancient sculptural ruins dating back to the 9th century. A perfect evening stroll to soak in the historical ambiance of Assam.",
+        image: "/images/colepark.png",
+        orientation: "left",
+        number: "05"
+      },
+      {
+        title: "Panimur Falls",
+        subtitle: "The Niagara of Assam",
+        description: "Where the Kopili River cascades over dramatic rock formations, creating a breathtaking white-water spectacle. A pristine natural getaway renowned for its picturesque scenery, roaring rapids, and serene riverbanks.",
+        image: "/images/panimur.png",
+        orientation: "right",
+        number: "06"
+      },
+      {
+        title: "Majuli Island",
+        subtitle: "World's Largest River Island",
+        description: "Nurtured by the Brahmaputra, Majuli is the heartland of Neo-Vaishnavite culture. Home to centuries-old Satras, traditional mask-making artisans, and vibrant tribal villages, it offers an idyllic glimpse into Assam's soul.",
+        image: "/images/majuli.png",
+        orientation: "left",
+        number: "07"
+      },
+      {
+        title: "Historic Sivasagar",
+        subtitle: "The Royal Ahom Heritage",
+        description: "Step into the grand legacy of the Ahom Kingdom. Highlights include the iconic Rang Ghar—Asia's oldest surviving amphitheater—the multi-tiered Kareng Ghar palace, and the massive man-made Sivasagar Tank.",
+        image: "/images/sivasagar.png",
+        orientation: "right",
+        number: "08"
+      }
+    ];
 
   return (
     <div className="w-full min-h-screen bg-surface text-on-surface pb-20">
@@ -140,7 +164,7 @@ export default function VenuePage() {
           <motion.div variants={fadeUp} className="w-full lg:w-1/2 relative h-[400px] sm:h-[500px] lg:h-180 mt-8 lg:mt-0">
             
             {/* Image 1: Main Venue (Council Hall) - Back Right */}
-            <div className="absolute top-0 right-0 w-3/4 h-[60%] rounded-[2rem] overflow-hidden shadow-2xl z-10 group border-4 border-[#FDFBF7]">
+            <div className="absolute top-0 right-0 w-3/4 h-[60%] rounded-2xl overflow-hidden shadow-2xl z-10 group border-4 border-[#FDFBF7]">
               <Image 
                 src="/images/council-hall.png" 
                 alt="Tezpur University Council Hall"
@@ -153,7 +177,7 @@ export default function VenuePage() {
             </div>
 
             {/* Image 2: Campus (Tezpur University) - Front Left Overlapping */}
-            <div className="absolute bottom-0 left-0 w-2/3 h-[55%] rounded-[2rem] overflow-hidden shadow-xl z-20 group border-8 border-[#FDFBF7]">
+            <div className="absolute bottom-0 left-0 w-2/3 h-[55%] rounded-2xl overflow-hidden shadow-xl z-20 group border-8 border-[#FDFBF7]">
               <Image 
                 src="/images/tezpur-university.png" 
                 alt="Tezpur University Campus"

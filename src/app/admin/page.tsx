@@ -14,6 +14,9 @@ export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminUser, setAdminUser] = useState<{name: string, role: string} | null>(null);
   
+  // Mobile Sidebar State
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 👈 Added
+
   // Login State
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -77,27 +80,29 @@ export default function AdminPage() {
   return (
     <div className="fixed inset-0 bg-surface flex overflow-hidden">
       
-      {/* Fixed Sidebar */}
+      {/* Dynamic Mobile & Desktop Sidebar */}
       <AdminSidebar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
-        handleLogout={handleLogout} 
+        handleLogout={handleLogout}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
       
-      {/* Main Content Area (Offset by the sidebar width) */}
+      {/* Main Content Area */}
       <div className="flex-1 md:pl-64 flex flex-col h-screen w-full relative">
         
         {/* Fixed Topbar */}
         <AdminTopBar 
           activeTab={activeTab} 
-          adminUser={adminUser} 
+          adminUser={adminUser}
+          onMenuClick={() => setIsSidebarOpen(true)}
         />
         
         {/* Scrollable Content Canvas */}
         <main className="flex-1 overflow-y-auto w-full p-6 md:p-10 ">
           <div className="max-w-[1440px] mx-auto h-full flex flex-col">
             
-            {/* Component Placeholders - We will replace these with real files next! */}
             {activeTab === "HOME" && (
               <Home adminUser={adminUser} setActiveTab={setActiveTab} />
             )}
@@ -105,7 +110,7 @@ export default function AdminPage() {
             {activeTab === "APPROVALS" && (
               <PendingApprovals />
             )}
-            
+
             {activeTab === "REVIEWS" && (
               <AbstractReviews />
             )}

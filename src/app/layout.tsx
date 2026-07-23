@@ -6,8 +6,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ConditionalLayout from "@/components/ConditionalLayout";
+import Providers from "@/components/providers"; // 👈 Import your QueryClient Provider
 
-// Bind fonts to the CSS variables defined in globals.css
 const playfair = Playfair_Display({ 
   subsets: ["latin"],
   variable: "--font-playfair",
@@ -31,18 +31,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // suppressHydrationWarning is critical here to allow next-themes/our custom script 
-    // to inject the 'dark' class on the server without React complaining on the client.
     <html lang="en" suppressHydrationWarning>
-        <body 
-          suppressHydrationWarning
-          className={`${playfair.variable} ${inter.variable} antialiased min-h-screen flex flex-col bg-background text-on-background`}
-        >
-        <ThemeProvider>
-          <ConditionalLayout>
-            {children}
-          </ConditionalLayout>
-        </ThemeProvider>
+      <body 
+        suppressHydrationWarning
+        className={`${playfair.variable} ${inter.variable} antialiased min-h-screen flex flex-col bg-background text-on-background`}
+      >
+        {/* 👇 Wrap ThemeProvider and the rest of the application with Providers */}
+        <Providers>
+          <ThemeProvider>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   );

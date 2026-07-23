@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Helper function to turn two calendar selections into a premium banner string
 const formatBannerDates = (startDateStr: string, endDateString: string): string => {
   if (!startDateStr) return "";
   if (!endDateString || startDateStr === endDateString) {
@@ -23,23 +22,21 @@ const formatBannerDates = (startDateStr: string, endDateString: string): string 
   const endDay = end.getDate();
   const year = start.getFullYear();
 
-  // Case 1: Dates are in the same month (e.g., October 26 - 27, 2026)
   if (startMonth === endMonth) {
     return `${startMonth} ${String(startDay).padStart(2, '0')} - ${String(endDay).padStart(2, '0')}, ${year}`;
   }
 
-  // Case 2: Dates cross into different months (e.g., October 31 - November 02, 2026)
   return `${startMonth} ${String(startDay).padStart(2, '0')} - ${endMonth} ${String(endDay).padStart(2, '0')}, ${year}`;
 };
 
 export default function SystemSettingsView() {
-  
   const [startInput, setStartInput] = useState("");
   const [endInput, setEndInput] = useState("");
 
   const [settings, setSettings] = useState({
     symposiumDates: "",
-    submissionDeadline: "",
+    earlyRegistrationDeadline: "",
+    lateRegistrationDeadline: "",
     notificationDate: "",
     accountName: "",
     bankName: "",
@@ -55,10 +52,38 @@ export default function SystemSettingsView() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   
-  // Custom file upload states for the dynamic QR Code image
   const [qrFile, setQrFile] = useState<File | null>(null);
   const [qrPreview, setQrPreview] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const parseSymposiumDates = (dateStr: string): { start: string; end: string } => {
+    if (!dateStr) return { start: "", end: "" };
+  
+    // Case 1: Standard formatted string like "October 26 - 27, 2026" or "October 26 - November 02, 2026"
+    const rangeMatch = dateStr.match(/^([A-Za-z]+)\s+(\d{1,2})\s*-\s*(?:([A-Za-z]+)\s+)?(\d{1,2}),?\s*(\d{4})$/);
+    if (rangeMatch) {
+      const [, startMonth, startDay, endMonth, endDay, year] = rangeMatch;
+      
+      const startDate = new Date(`${startMonth} ${startDay}, ${year}`);
+      const endDate = new Date(`${endMonth || startMonth} ${endDay}, ${year}`);
+  
+      if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+        return {
+          start: startDate.toISOString().split("T")[0],
+          end: endDate.toISOString().split("T")[0],
+        };
+      }
+    }
+  
+    // Case 2: Fallback if it's already an ISO or standard date string
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      const formatted = d.toISOString().split("T")[0];
+      return { start: formatted, end: formatted };
+    }
+  
+    return { start: "", end: "" };
+  };
 
   useEffect(() => {
     fetch("/api/settings")
@@ -67,7 +92,6 @@ export default function SystemSettingsView() {
         if (!data.error) {
           setSettings(data);
           if (data.upiQrUrl) setQrPreview(data.upiQrUrl);
-          if (data.submissionDeadline) setSettings(prev => ({...prev, submissionDeadline: data.submissionDeadline}));
         }
       })
       .catch(() => setMessage({ type: "error", text: "Failed to initialize configuration values." }))
@@ -94,7 +118,6 @@ export default function SystemSettingsView() {
     try {
       let finalQrUrl = settings.upiQrUrl;
 
-      // Optional: If a new file is uploaded, handle R2/S3 or local base64 string injection
       if (qrFile && qrPreview.startsWith("data:image")) {
         finalQrUrl = qrPreview; 
       }
@@ -122,7 +145,6 @@ export default function SystemSettingsView() {
     }
   };
 
-  // --- LOADING / SKELETON STATE COMPONENT ---
   if (loading) {
     return (
       <div className="bg-white rounded-2xl border border-surface-dim/30 p-6 max-w-4xl space-y-6">
@@ -139,14 +161,6 @@ export default function SystemSettingsView() {
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-          {[1, 2, 3, 4].map((n) => (
-            <div key={n} className="animate-pulse space-y-2">
-              <div className="h-3 w-24 bg-surface-dim/60 rounded" />
-              <div className="h-10 w-full bg-surface-dim rounded" />
-            </div>
-          ))}
-        </div>
       </div>
     );
   }
@@ -154,7 +168,6 @@ export default function SystemSettingsView() {
   return (
     <div className="bg-white rounded-2xl border border-surface-dim/30 shadow-[0_4px_20px_rgba(0,33,71,0.02)] p-6 min-w-full font-inter text-left mt-6">
       
-      {/* Dynamic Header Block with Mode Toggles */}
       <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-surface-dim/20">
         <div>
           <h3 className="font-playfair text-3xl font-bold text-primary">Global Configuration Parameters</h3>
@@ -163,25 +176,18 @@ export default function SystemSettingsView() {
         
         {!isEditing && (
           <button
-            onClick={() => setIsEditing(true)}
+            onClick={() => {
+              const { start, end } = parseSymposiumDates(settings.symposiumDates);
+              setStartInput(start);
+              setEndInput(end);
+              setIsEditing(true);
+            }}
             className="px-4 py-2 border border-secondary/30 text-secondary hover:bg-secondary/5 rounded-xl text-lg font-semibold font-inter transition-all shadow-sm active:scale-95 cursor-pointer"
           >
             Modify Details
           </button>
         )}
       </div>
-
-      {settings.storageWarning && (
-        <div className="p-4 mb-6 rounded-xl border bg-amber-50 border-amber-300 text-amber-900 font-inter flex gap-3 items-center">
-          <svg className="w-9 h-9 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-          </svg>
-          <div>
-            <p className="text-lg font-bold uppercase tracking-wider">Warning: Storage Allocation Capacity Reached ({settings.storagePercentage}%)</p>
-            <p className="text-sm text-amber-800 mt-0.5">Your cloud storage is approaching maximum capacity limits. Run bulk archiving operations immediately to prevent registration transaction crashes.</p>
-          </div>
-        </div>
-      )}
 
       {message && (
         <div className={`p-4 rounded-xl text-xs font-semibold mb-6 border ${message.type === "success" ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200"}`}>
@@ -194,64 +200,92 @@ export default function SystemSettingsView() {
         {/* SECTION 1: EVENT TIMELINES */}
         <div className="space-y-4">
           <h4 className="text-2xl font-semibold text-primary tracking-widest uppercase border-l-2 border-secondary pl-2">Event Timelines</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             
-          <div className="space-y-1.5 md:col-span-1">
-            <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Symposium Banner Dates</label>
-            {isEditing ? (
-              <div className="flex flex-col gap-2">
-                <div className="flex-1 space-y-1">
+            {/* Symposium Banner Dates */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                Symposium Dates
+              </label>
+              {isEditing ? (
+                <div className="flex flex-col gap-2">
                   <input 
-                    required 
                     type="date" 
                     value={startInput} 
                     onChange={(e) => {
                       const nextStart = e.target.value;
                       setStartInput(nextStart);
-                      setSettings({ ...settings, symposiumDates: formatBannerDates(nextStart, endInput) });
+                      setSettings({ ...settings, symposiumDates: formatBannerDates(nextStart, endInput || nextStart) });
                     }} 
-                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2 text-xl text-primary focus:outline-none focus:border-secondary" 
+                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2 text-sm text-primary focus:outline-none focus:border-secondary" 
                   />
-                  <span className="text-sm text-secondary font-medium">Start Date</span>
-                </div>
-                <div className="flex-1 space-y-1"> 
                   <input 
-                    required 
                     type="date" 
                     value={endInput} 
                     min={startInput} 
                     onChange={(e) => {
                       const nextEnd = e.target.value;
                       setEndInput(nextEnd);
-                      setSettings({ ...settings, symposiumDates: formatBannerDates(startInput, nextEnd) });
+                      setSettings({ ...settings, symposiumDates: formatBannerDates(startInput || nextEnd, nextEnd) });
                     }} 
-                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2 text-xl text-primary focus:outline-none focus:border-secondary" 
+                    className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2 text-sm text-primary focus:outline-none focus:border-secondary" 
                   />
-                  <span className="text-sm text-secondary font-medium">End Date</span>
                 </div>
-              </div>
-            ) : (
-              <p className="text-xl font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">
-                {settings.symposiumDates || "Not configured"}
-              </p>
-            )}
-          </div>
-
-            <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Abstract Submission Deadline</label>
-              {isEditing ? (
-                <input required type="date" value={settings.submissionDeadline} onChange={(e) => setSettings({ ...settings, submissionDeadline: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-xl text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" />
               ) : (
-                <p className="text-xl font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl font-mono">{settings.submissionDeadline || "Not configured"}</p>
+                <p className="text-sm font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">
+                  {settings.symposiumDates || "Not configured"}
+                </p>
               )}
             </div>
 
+            {/* Early Registration Deadline */}
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-on-surface-variant uppercase tracking-wider">Review Notification Date</label>
+              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Early Registration</label>
               {isEditing ? (
-                <input required type="date" value={settings.notificationDate} onChange={(e) => setSettings({ ...settings, notificationDate: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-xl text-primary focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" />
+                <input 
+                  type="date" 
+                  value={settings.earlyRegistrationDeadline || ""} 
+                  onChange={(e) => setSettings({ ...settings, earlyRegistrationDeadline: e.target.value })} 
+                  className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" 
+                />
               ) : (
-                <p className="text-xl font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl font-mono">{settings.notificationDate || "Not configured"}</p>
+                <p className="text-sm font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl font-mono">
+                  {settings.earlyRegistrationDeadline || "Not configured"}
+                </p>
+              )}
+            </div>
+
+            {/* Late Reg & Abstract Deadline */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Late Reg & Abstract Submission</label>
+              {isEditing ? (
+                <input 
+                  type="date" 
+                  value={settings.lateRegistrationDeadline || ""} 
+                  onChange={(e) => setSettings({ ...settings, lateRegistrationDeadline: e.target.value })} 
+                  className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" 
+                />
+              ) : (
+                <p className="text-sm font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl font-mono">
+                  {settings.lateRegistrationDeadline || "Not configured"}
+                </p>
+              )}
+            </div>
+
+            {/* Notification Date */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-on-surface-variant uppercase tracking-wider">Review Notification Date</label>
+              {isEditing ? (
+                <input 
+                  type="date" 
+                  value={settings.notificationDate || ""} 
+                  onChange={(e) => setSettings({ ...settings, notificationDate: e.target.value })} 
+                  className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" 
+                />
+              ) : (
+                <p className="text-sm font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl font-mono">
+                  {settings.notificationDate || "Not configured"}
+                </p>
               )}
             </div>
 
@@ -263,46 +297,44 @@ export default function SystemSettingsView() {
           <h4 className="text-2xl font-semibold text-primary tracking-widest uppercase border-l-2 border-secondary pl-2">Payment Gateways & Banking</h4>
           <div className="flex flex-col md:flex-row gap-6 items-start">
             
-            {/* Form Fields Column */}
             <div className="w-full md:flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Banking Account Title</label>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Banking Account Title</label>
                 {isEditing ? (
-                  <input required type="text" value={settings.accountName} onChange={(e) => setSettings({ ...settings, accountName: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-xl text-primary focus:outline-none focus:border-secondary" />
+                  <input type="text" value={settings.accountName || ""} onChange={(e) => setSettings({ ...settings, accountName: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" />
                 ) : (
-                  <p className="text-xl font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.accountName}</p>
+                  <p className="text-sm font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.accountName}</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Institution Bank Name</label>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Institution Bank Name</label>
                 {isEditing ? (
-                  <input required type="text" value={settings.bankName} onChange={(e) => setSettings({ ...settings, bankName: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-xl text-primary focus:outline-none focus:border-secondary" />
+                  <input type="text" value={settings.bankName || ""} onChange={(e) => setSettings({ ...settings, bankName: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" />
                 ) : (
-                  <p className="text-xl font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.bankName}</p>
+                  <p className="text-sm font-medium text-primary bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.bankName}</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Account Number</label>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Account Number</label>
                 {isEditing ? (
-                  <input required type="text" value={settings.accountNumber} onChange={(e) => setSettings({ ...settings, accountNumber: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-xl text-primary focus:outline-none focus:border-secondary" />
+                  <input type="text" value={settings.accountNumber || ""} onChange={(e) => setSettings({ ...settings, accountNumber: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" />
                 ) : (
-                  <p className="text-xl font-bold text-primary font-mono tracking-wide bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.accountNumber}</p>
+                  <p className="text-sm font-bold text-primary font-mono tracking-wide bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.accountNumber}</p>
                 )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Bank IFSC Code</label>
+                <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Bank IFSC Code</label>
                 {isEditing ? (
-                  <input required type="text" value={settings.ifscCode} onChange={(e) => setSettings({ ...settings, ifscCode: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-xl text-primary focus:outline-none focus:border-secondary" />
+                  <input type="text" value={settings.ifscCode || ""} onChange={(e) => setSettings({ ...settings, ifscCode: e.target.value })} className="w-full bg-surface-bright border border-surface-dim/50 rounded-xl px-3 py-2.5 text-sm text-primary focus:outline-none focus:border-secondary" />
                 ) : (
-                  <p className="text-xl font-bold text-primary font-mono tracking-wide bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.ifscCode}</p>
+                  <p className="text-sm font-bold text-primary font-mono tracking-wide bg-surface-bright/50 px-3 py-2.5 border border-transparent rounded-xl">{settings.ifscCode}</p>
                 )}
               </div>
             </div>
 
-            {/* Premium QR Code Component Row */}
             <div className="w-full md:w-auto flex flex-col items-center gap-2 border border-surface-dim/40 bg-surface-bright/30 rounded-2xl p-4 shrink-0 self-stretch justify-center">
               <div className="relative w-28 h-28 bg-white border border-surface-dim/50 rounded-xl p-2 flex items-center justify-center shadow-inner overflow-hidden group">
                 {qrPreview ? (
@@ -329,7 +361,6 @@ export default function SystemSettingsView() {
           </div>
         </div>
 
-        {/* Form Mutation Action Triggers */}
         <AnimatePresence>
           {isEditing && (
             <motion.div 
