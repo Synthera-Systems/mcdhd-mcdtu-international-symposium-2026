@@ -43,7 +43,6 @@ const speakersData = [
   // { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, Denver, USA", image: "/speakers/rajesh-agarwal.png" },
   { name: "Prof. C.V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/cv-rao.png" },
   // { name: "Prof. Natasha Kyprianou", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/natasha-kyprianou.png" },
-  { name: "Prof. R. P. Singh", affiliation: "Gautam Buddha University, Noida, India", image: "/speakers/rp-singh.png" },
   { name: "Prof. Sujit Basu", affiliation: "Ohio State University, USA", image: "/speakers/sujit-basu.png" },
   { name: "Dr. Chandrani Sarkar", affiliation: "Mitchell Cancer Institute, USA", image: "/speakers/chandrani-sarkar.png" },
   { name: "Prof. Pankaj Singh", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/pankaj-singh.png" },
@@ -72,6 +71,7 @@ const speakersData = [
 
 const keyspeakersData = [
   { name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/jerry-chipuk.png" },
+  { name: "Prof. R. P. Singh", affiliation: "Gautam Buddha University, Noida, India", image: "/speakers/rp-singh.png" },
 ];
 
 export default function SpeakersPage() {
