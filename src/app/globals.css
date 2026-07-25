@@ -37,3 +37,51 @@
     font-family: var(--font-playfair);
   }
 }
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+@property --sweep {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* 1. Draw phase: two light beams sweep down both sides and meet at bottom (180deg) */
+@keyframes draw-ring {
+  0% {
+    --sweep: 0deg;
+  }
+  100% {
+    --sweep: 180deg;
+  }
+}
+
+/* 2. Continuous rotation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+/* Helper animation classes */
+.animate-draw-ring {
+  animation: draw-ring 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}

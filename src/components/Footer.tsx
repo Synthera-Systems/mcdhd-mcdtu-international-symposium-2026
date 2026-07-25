@@ -190,13 +190,50 @@ export default function Footer() {
         {/* FIXED: Reordered layout on mobile so badge is on top of copyright */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 sm:gap-6 font-inter text-[9px] sm:text-xs text-[#606060] text-center md:text-left">
           
-          <div className="order-1 md:order-2 flex items-center gap-2 sm:gap-3 bg-white/5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/5 hover:border-white/10 transition-colors shrink-0">
-            <span>Platform developed by</span>
+        <div className="order-1 md:order-2 relative group p-[1px] rounded-full overflow-hidden transition-all duration-300 shrink-0">
+  
+          {/* 1. DYNAMIC ROTATING GLOW (Behind) */}
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full pointer-events-none">
+            <div 
+              className="w-[350%] aspect-square animate-spin-slow opacity-0 group-hover:opacity-75 transition-opacity duration-500 blur-md"
+              style={{
+                background: 'conic-gradient(from 0deg, #FF2A6D 0%, #9933FF 33%, #05D9E8 66%, #FF2A6D 100%)'
+              }}
+            />
+          </div>
+
+          {/* 2. DYNAMIC ROTATING BORDER RING (Crisp) */}
+          <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full pointer-events-none">
+            <div 
+              className="w-[350%] aspect-square animate-spin-slow opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              style={{
+                background: 'conic-gradient(from 0deg, #FF2A6D 0%, #9933FF 33%, #05D9E8 66%, #FF2A6D 100%)'
+              }}
+            />
+          </div>
+
+          {/* 3. INNER PILL CONTENT */}
+          <a 
+            href="https://synthera-systems-official.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="relative z-10 flex items-center gap-2 sm:gap-3 bg-[#0a0a0c] px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/10 group-hover:border-transparent transition-all duration-300"
+          >
+            <span className="text-white/80 group-hover:text-white transition-colors">
+              Platform developed by
+            </span>
             <div className="flex items-center gap-1.5 sm:gap-2 text-white font-medium">
-              <Image src="/synthera_system.svg" alt="Synthera Systems Logo" width={16} height={16} className="sm:w-6 sm:h-6 opacity-80" />
+              <Image 
+                src="/synthera_system.svg" 
+                alt="Synthera Systems Logo" 
+                width={16} 
+                height={16} 
+                className="sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110" 
+              />
               <span>Synthera Systems</span>
             </div>
-          </div>
+          </a>
+        </div>
           
           <p className="order-2 md:order-1 px-2 w-full md:w-auto">
             © 2026 International Symposium on Mitochondria, Cell Death, and Human Disease. All rights reserved.
