@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 import { ThemeProvider } from "@/context/ThemeContext";
 import ConditionalLayout from "@/components/ConditionalLayout";
-import Providers from "@/components/providers"; // 👈 Import your QueryClient Provider
+import Providers from "@/components/providers";
 
 const playfair = Playfair_Display({ 
   subsets: ["latin"],
@@ -21,8 +19,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MitoCan-Symposium 2026",
+  // %s will be replaced by child page titles automatically!
+  title: {
+    template: "%s | MitoCan-Symposium 2026",
+    default: "MitoCan-Symposium 2026 | International Symposium on Mitochondria",
+  },
   description: "International Symposium on Mitochondria, Cell Death, and Human Disease: Recent Advances in Cancer Research and Clinical Translation. November 2 - 3, 2026.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -36,7 +47,6 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${playfair.variable} ${inter.variable} antialiased min-h-screen flex flex-col bg-background text-on-background`}
       >
-        {/* 👇 Wrap ThemeProvider and the rest of the application with Providers */}
         <Providers>
           <ThemeProvider>
             <ConditionalLayout>
