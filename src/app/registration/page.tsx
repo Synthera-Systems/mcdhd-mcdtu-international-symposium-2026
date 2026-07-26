@@ -96,11 +96,11 @@ export default function RegistrationPage() {
       .then((data) => {
         if (!data.error) {
           setBankDetails({
-            accountName: data.accountName,
-            bankName: data.bankName,
-            accountNumber: data.accountNumber,
-            ifscCode: data.ifscCode,
-            upiQrUrl: data.upiQrUrl
+            accountName: data.accountName || "",
+            bankName: data.bankName || "",
+            accountNumber: data.accountNumber || "",
+            ifscCode: data.ifscCode || "",
+            upiQrUrl: data.upiQrUrl || ""
           });
         }
       })
@@ -537,21 +537,29 @@ export default function RegistrationPage() {
                       </div>
                     </div>
 
-                    {/* UPI QR Wrapper Section */}
-                    <div className="w-full md:w-auto flex flex-col items-center gap-2 sm:gap-3 pt-6 md:pt-0 md:pl-8 border-t md:border-t-0 md:border-l border-surface-dim/50 shrink-0">
-                      <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl shadow-md border border-surface-dim/30 p-2 flex items-center justify-center relative overflow-hidden">
+                    {/* UPI QR / TU Logo Section */}
+                  <div className="w-full md:w-auto flex flex-col items-center gap-2 sm:gap-3 pt-6 md:pt-0 md:pl-8 border-t md:border-t-0 md:border-l border-surface-dim/50 shrink-0">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl shadow-md border border-surface-dim/30 p-2 flex items-center justify-center relative overflow-hidden">
                       {loadingSettings ? (
                         <div className="absolute inset-0 bg-surface-dim animate-pulse m-2 rounded" />
                       ) : bankDetails.upiQrUrl ? (
-                        <img src={bankDetails.upiQrUrl} alt="UPI Payment QR" className="w-full h-full object-contain" />
+                        <img
+                          src={bankDetails.upiQrUrl}
+                          alt="UPI Payment QR"
+                          className="w-full h-full object-contain"
+                        />
                       ) : (
-                        <div className="absolute inset-0 bg-gradient-to-br from-primary-container to-primary m-1.5 sm:m-2 rounded flex items-center justify-center">
-                          <svg className="w-8 h-8 sm:w-12 sm:h-12 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" /></svg>
-                        </div>
+                        <img
+                          src="/logos/TU.png"
+                          alt="Tezpur University Logo"
+                          className="w-full h-full object-contain p-1"
+                        />
                       )}
-                      </div>
-                      <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Scan for UPI Payment</p>
                     </div>
+                    <p className="font-inter text-[9px] sm:text-[10px] font-bold text-on-surface-variant uppercase tracking-widest text-center">
+                      {loadingSettings ? "" : bankDetails.upiQrUrl ? "Scan for UPI Payment" : "Tezpur University"}
+                    </p>
+                  </div>
                 </div>
               </motion.div>
 
@@ -593,16 +601,15 @@ export default function RegistrationPage() {
                           <input 
                             required
                             type="text" 
-                            maxLength={12}
                             value={formData.utrNumber}
-                            onChange={e => setFormData({...formData, utrNumber: e.target.value})}
-                            placeholder="0000 0000 0000" 
+                            onChange={e => setFormData({...formData, utrNumber: e.target.value.toUpperCase()})}
+                            placeholder="UTR / Transaction Ref No." 
                             className="w-full bg-surface-bright border border-surface-dim/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-inter text-xs sm:text-sm text-primary tracking-widest sm:tracking-[0.2em] focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" 
                           />
                         </div>
                         <div className="bg-secondary/5 border border-secondary/20 rounded-lg p-3 sm:p-4 flex items-start gap-2 sm:gap-3">
                            <svg className="w-4 h-4 sm:w-5 sm:h-5 text-secondary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                           <p className="font-inter text-[10px] sm:text-xs text-secondary-container leading-relaxed">
+                           <p className="font-inter text-[10px] sm:text-xs text-secondary leading-relaxed">
                              Ensure the UTR matches the screenshot for instant automated verification.
                            </p>
                         </div>
