@@ -70,6 +70,61 @@ export default function SubmissionsPage() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Verification states
+  const [verificationState, setVerificationState] = useState<{
+    status: "idle" | "verifying" | "valid" | "invalid";
+    message?: string;
+    delegateName?: string;
+  }>({ status: "idle" });
+
+  // Live lookup effect with 500ms debounce
+  useEffect(() => {
+    const refId = formData.registrationRefId.trim();
+
+    // Reset state if cleared or too short
+    if (refId.length < 6) {
+      setVerificationState({ status: "idle" });
+      return;
+    }
+
+    setVerificationState({ status: "verifying" });
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/verify_delegate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ registrationRefId: refId }),
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+          setVerificationState({
+            status: "valid",
+            message: `Verified: ${data.delegate.fullName}`,
+            delegateName: data.delegate.fullName,
+          });
+          // Auto pre-fill email if empty
+          if (!formData.presenterEmail && data.delegate.email) {
+            setFormData((prev) => ({ ...prev, presenterEmail: data.delegate.email }));
+          }
+        } else {
+          setVerificationState({
+            status: "invalid",
+            message: data.message,
+          });
+        }
+      } catch (err) {
+        setVerificationState({
+          status: "invalid",
+          message: "Unable to verify ID at this time.",
+        });
+      }
+    }, 500); 
+
+    return () => clearTimeout(timer);
+  }, [formData.registrationRefId]);
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -141,6 +196,16 @@ export default function SubmissionsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (verificationState.status === "verifying") {
+      setError("Please wait until your Delegate Reference ID verification completes.");
+      return;
+    }
+  
+    if (verificationState.status !== "valid") {
+      setError(verificationState.message || "Please provide a valid Delegate Reference ID before submitting.");
+      return;
+    }
 
     if (!formData.title || !formData.authors || !formData.presenterEmail || !abstractFile) {
       setError("Please fill all required fields and upload your abstract document.");
@@ -471,9 +536,15 @@ export default function SubmissionsPage() {
                   )}
 
                   {/* MANDATORY: Delegate Reference Token Key */}
-                  <div className="bg-secondary/5 border-l-4 border-secondary p-4 rounded-r-xl mb-6 text-left">
-                    <label className="font-inter text-[10px] sm:text-xs font-bold text-secondary uppercase tracking-wide">
-                      Delegate Reference ID
+                  <div className="bg-secondary/5 border-l-4 border-secondary p-4 rounded-r-xl mb-6 text-left relative">
+                    <label className="font-inter text-[10px] sm:text-xs font-bold text-secondary uppercase tracking-wide flex items-center justify-between">
+                      <span>Delegate Reference ID</span>
+                      {verificationState.status === "verifying" && (
+                        <span className="text-secondary flex items-center gap-1 text-[10px] font-normal">
+                          <svg className="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                          Verifying...
+                        </span>
+                      )}
                     </label>
                     <input 
                       required
@@ -481,11 +552,35 @@ export default function SubmissionsPage() {
                       value={formData.registrationRefId}
                       onChange={(e) => setFormData({...formData, registrationRefId: e.target.value.toUpperCase()})}
                       placeholder="REF-XXXXXX-26"
-                      className="w-full mt-2 bg-white border border-secondary/30 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-mono text-sm text-primary tracking-widest focus:outline-none focus:ring-1 focus:ring-secondary uppercase placeholder:tracking-normal placeholder:font-inter"
+                      className={`w-full mt-2 bg-white border rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 font-mono text-sm tracking-widest focus:outline-none uppercase transition-colors ${
+                        verificationState.status === "valid" 
+                          ? "border-green-500 ring-1 ring-green-500 text-green-900" 
+                          : verificationState.status === "invalid"
+                          ? "border-red-500 ring-1 ring-red-500 text-red-900"
+                          : "border-secondary/30 focus:ring-1 focus:ring-secondary text-primary"
+                      }`}
                     />
-                    <p className="text-[10px] text-on-surface-variant mt-2 italic leading-relaxed">
-                      Provide the exact ID issued on your registration completion window and email.
-                    </p>
+
+                    {/* Status Messages */}
+                    {verificationState.status === "valid" && (
+                      <p className="text-xs font-medium text-green-600 mt-2 flex items-center gap-1.5">
+                        <svg className="w-4 h-4 shrink-0 border rounded-full p-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        {verificationState.message}
+                      </p>
+                    )}
+
+                    {verificationState.status === "invalid" && (
+                      <p className="text-xs font-medium text-red-600 mt-2 flex items-center gap-1.5">
+                        <svg className="w-4 h-4 shrink-0 border rounded-full p-px" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        {verificationState.message}
+                      </p>
+                    )}
+
+                    {verificationState.status === "idle" && (
+                      <p className="text-[10px] text-on-surface-variant mt-2 italic leading-relaxed">
+                        Provide the exact ID issued on your registration completion window and email.
+                      </p>
+                    )}
                   </div>
 
                   {/* Abstract Title Input */}
@@ -632,7 +727,7 @@ export default function SubmissionsPage() {
                   {/* Submission Commit Button */}
                   <div className="pt-4">
                     <motion.button 
-                      disabled={!!loadingStep}
+                      disabled={!!loadingStep || verificationState.status !== "valid"}
                       {...springInteraction}
                       className="w-full bg-primary text-white font-inter font-medium text-sm sm:text-lg py-3.5 sm:py-4 rounded-xl flex items-center justify-center gap-2 sm:gap-3 hover:bg-primary-container transition-colors shadow-lg shadow-primary/20 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
                     >
