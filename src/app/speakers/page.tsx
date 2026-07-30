@@ -77,6 +77,7 @@ export const speakersData = [
   { name: "Dr. Ravi Thakur", affiliation: "CHRIST University, Bengaluru, India", image: "/speakers/ravi.png" },
   { name: "Prof. Shama Prasad K", affiliation: "Manipal Academy of Higher Education, Manipal, India", image: "/speakers/shama-prasad.png" },
   { name: "Dr. Rajeev Kumar", affiliation: "Cachar Cancer Hospital and Research Institute, Silchar, India", image: "/speakers/rajeev-kumar.png" },
+  { name: "Dr. Litika Vermani", affiliation: "Cachar Cancer Hospital and Research Institute, Silchar, India", image: "/speakers/litika.png" },
   { name: "Prof. S. Dhanalakhmi", affiliation: "Gautam Buddha University, Noida, India", image: "/speakers/dhanlakshmi.png" },
   { name: "Dr. Prasenjit Dey", affiliation: "Roswell Park Comprehensive Cancer Center, Buffalo, USA", image: "/speakers/prasenjit-dey.png" }
 ];
