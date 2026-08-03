@@ -50,7 +50,7 @@ const advisoryCommittee = [
 
 const localCoConvenors = [
   { name: "Prof. S.K. Ray", affiliation: "Dept. of MBBT, Tezpur University, Tezpur, India" },
-  { name: "Prof. D. Mahanta", affiliation: "Dept. of Physics, Tezpur University, Tezpur, India" },
+  { name: "Prof. D. Mohanta", affiliation: "Dept. of Physics, Tezpur University, Tezpur, India" },
   { name: "Prof. Vijay K Nath", affiliation: "Dept of Electonics and Comm. Eng., Tezpur University, Tezpur, India" }
 ];
 

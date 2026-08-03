@@ -49,7 +49,7 @@ export const speakersData = [
   // { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, Denver, USA", image: "/speakers/rajesh-agarwal.png" },
   { name: "Prof. C.V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/cv-rao.png" },
   // { name: "Prof. Natasha Kyprianou", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/natasha-kyprianou.png" },
-  { name: "Prof. Sujit Basu", affiliation: "Ohio State University, USA", image: "/speakers/sujit-basu.png" },
+  // { name: "Prof. Sujit Basu", affiliation: "Ohio State University, USA", image: "/speakers/sujit-basu.png" },
   { name: "Dr. Chandrani Sarkar", affiliation: "Mitchell Cancer Institute, USA", image: "/speakers/chandrani-sarkar.png" },
   { name: "Prof. Pankaj Singh", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/pankaj-singh.png" },
   // { name: "Prof. Doris Germain", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/doris-germain.png" },
