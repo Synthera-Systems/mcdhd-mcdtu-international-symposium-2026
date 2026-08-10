@@ -6,11 +6,23 @@ import { cookies } from "next/headers";
 import { sendAbstractAcceptedEmail, sendAbstractRejectedEmail } from "@/lib/email";
 
 export async function PUT(request: Request) {
-  // 1. Verify Security Cookie
+  // 1. Verify Security Cookie safely
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
 
-  if (!session || session.value !== "authenticated") {
+  if (!session?.value) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  }
+
+  let isAuthenticated = false;
+  try {
+    const parsed = JSON.parse(session.value);
+    isAuthenticated = parsed === "authenticated" || parsed.authenticated === true || parsed.role === "admin";
+  } catch {
+    isAuthenticated = session.value === "authenticated";
+  }
+
+  if (!isAuthenticated) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 

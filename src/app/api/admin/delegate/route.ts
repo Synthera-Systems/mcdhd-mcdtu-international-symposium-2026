@@ -9,7 +9,20 @@ export async function PUT(request: Request) {
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
 
-  if (!session || session.value !== "authenticated") {
+  if (!session?.value) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  }
+
+  // Parse session JSON or fallback string safely
+  let isAuthenticated = false;
+  try {
+    const parsed = JSON.parse(session.value);
+    isAuthenticated = parsed === "authenticated" || parsed.authenticated === true || parsed.role === "admin";
+  } catch {
+    isAuthenticated = session.value === "authenticated";
+  }
+
+  if (!isAuthenticated) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
@@ -25,9 +38,6 @@ export async function PUT(request: Request) {
       where: { id: paymentId },
       data: { status: newStatus }
     });
-
-    // Note: If you want to send a "Registration Fully Approved" email here later, 
-    // you can import it from lib/email.ts and fire it off.
 
     return NextResponse.json({ success: true, payment: updatedPayment }, { status: 200 });
 
