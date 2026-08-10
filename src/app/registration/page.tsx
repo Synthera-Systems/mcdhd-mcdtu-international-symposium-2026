@@ -174,7 +174,7 @@ export default function RegistrationPage() {
     }
 
     if (selectedTier === "Student" && !formData.studentLevel) {
-      setError("Please select your academic level (MSc, PhD, or RA/PostDoc).");
+      setError("Please select your academic level (MSc, PhD, RA/PostDoc, or Clinician/Medical Student).");
       return;
     }
 
@@ -447,7 +447,8 @@ export default function RegistrationPage() {
                           {[
                             { id: "MSc", label: "MSc Student" },
                             { id: "PhD", label: "PhD Scholar" },
-                            { id: "RA/PostDoc", label: "RA / PostDoc" }
+                            { id: "RA/PostDoc", label: "RA / PostDoc" },
+                            { id: "Clinician/Medical", label: "Clinician / Medical Student" }
                           ].map((level) => (
                             <div 
                               key={level.id}
