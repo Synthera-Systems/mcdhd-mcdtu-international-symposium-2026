@@ -38,7 +38,7 @@ const advisoryCommittee = [
   { name: "Prof. V.K. Jain", affiliation: "Former Vice Chancellor, Tezpur University, Tezpur, India" },
   {name: "Prof. Gokul Das", affiliation: "Roswell Park Comprehensive Cancer Center, USA"},
   {name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai,New York, USA"},
-  {name: "Prof. Ajay Singh", affiliation: "Mitchell Cancer Institute, Alabama, USA"},
+  {name: "Prof. Ajay Singh", affiliation: "University of Mississipi medical center, USA"},
   { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, USA" },
   { name: "Prof. Chinthalapally V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA" },
   { name: "Prof. R.P. Singh", affiliation: "Vice Chancellor, Gautam Buddha University, Noida, India" },

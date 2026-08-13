@@ -44,7 +44,7 @@ export const speakersData = [
   { name: "Prof. Raymond B. Birge", affiliation: "Rutgers School of Biomedical and Health Sciences, Newark, USA", image: "/speakers/raymond-birge.png" },
   { name: "Prof. Dhyan Chandra", affiliation: "Roswell Park Comprehensive Cancer Center, New York, USA", image: "/speakers/dhyan-chandra.png" },
   { name: "Prof. Gokul Das", affiliation: "Roswell Park Comprehensive Cancer Center, USA", image: "/speakers/gokul.png" },
-  { name: "Prof. Ajay Singh", affiliation: "Mitchell Cancer Institute, Alabama, USA", image: "/speakers/ajay.png" },
+  { name: "Prof. Ajay Singh", affiliation: "University of Mississipi medical center, USA", image: "/speakers/ajay.png" },
   { name: "Prof. D.K. Bhattacharya", affiliation: "Tezpur University, Tezpur, India", image: "/speakers/dk-bhattacharya.png" },
   // { name: "Prof. Rajesh Agarwal", affiliation: "University of Colorado, Denver, USA", image: "/speakers/rajesh-agarwal.png" },
   // { name: "Prof. C.V. Rao", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/cv-rao.png" },
