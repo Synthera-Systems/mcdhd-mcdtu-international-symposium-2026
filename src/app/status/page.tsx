@@ -10,28 +10,35 @@ export default function StatusTrackingPage() {
   const [statusData, setStatusData] = useState<any | null>(null);
 
   const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!referenceId) return;
+  e.preventDefault();
+  if (!referenceId) return;
 
-    setLoading(true);
-    setError(null);
-    setStatusData(null);
+  setLoading(true);
+  setError(null);
+  setStatusData(null);
 
-    try {
-      const res = await fetch(`/api/status?ref=${referenceId}`);
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to fetch status.");
-      }
-
-      setStatusData(data);
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  try {
+    const res = await fetch(`/api/status?ref=${encodeURIComponent(referenceId.trim())}`);
+    
+    // Guard against non-JSON (HTML 404/500) error pages
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("Unable to connect to the status service. Please try again.");
     }
-  };
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to fetch status.");
+    }
+
+    setStatusData(data);
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-surface pt-24 pb-24 px-6">
