@@ -476,10 +476,10 @@ export default function Home() {
           </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 sm:gap-8 w-full max-w-7xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 w-full max-w-7xl">
             {[
               { name: "Anusandhan National Research Foundation (ANRF)", src: "/logos/anrf.png" },
-              { name: "Department of BioTechnology (DBT)", src: "/logos/dbt.png" },
+              // { name: "Department of BioTechnology (DBT)", src: "/logos/dbt.png" },
               { name: "Indian Council of Medical Research (ICMR)", src: "/logos/icmr.png" },
               { name: "Council of Scientific and Industrial Research (CSIR)", src: "/logos/csir.png" },
               { name: "JNU Pair Network", src: "/logos/JNUN.png" }
