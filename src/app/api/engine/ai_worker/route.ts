@@ -87,8 +87,8 @@ export async function POST(request: Request) {
       console.log(`[AI Worker] SUCCESS: ${referenceId} verified.`);
       sendRegistrationVerifiedEmail(email, fullName, referenceId); 
     } else {
-      console.log(`[AI Worker] FAILED: ${referenceId} rejected. Reason: ${aiData.reason}`);
-      sendActionRequiredEmail(email, fullName, actionToken, aiData.reason);
+      console.log(`[AI Worker] FAILED: ${referenceId} flagged. Reason: ${aiData.reason}`);
+      sendActionRequiredEmail(email, fullName, actionToken);
     }
 
     return NextResponse.json({ success: true, status: newStatus });

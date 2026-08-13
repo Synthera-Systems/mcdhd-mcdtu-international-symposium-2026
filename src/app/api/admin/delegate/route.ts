@@ -3,9 +3,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { sendRegistrationApprovedEmail, sendRegistrationRejectedEmail } from "@/lib/email";
 
 export async function PUT(request: Request) {
-  // 1. Verify Security Cookie
+  // 1. Verify Security Cookie safely
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
 
@@ -13,7 +14,6 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
   }
 
-  // Parse session JSON or fallback string safely
   let isAuthenticated = false;
   try {
     const parsed = JSON.parse(session.value);
@@ -33,11 +33,31 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
     }
 
-    // 2. Update the payment status
+    // 2. Update status and include delegate details
     const updatedPayment = await prisma.payment.update({
       where: { id: paymentId },
-      data: { status: newStatus }
+      data: { status: newStatus },
+      include: { delegate: true }
     });
+
+    const delegate = updatedPayment.delegate;
+
+    // 3. Trigger final approval or rejection email
+    if (delegate) {
+      if (newStatus === "COMPLETED") {
+        sendRegistrationApprovedEmail(
+          delegate.email,
+          delegate.fullName,
+          delegate.referenceId,
+          delegate.category
+        );
+      } else if (newStatus === "FAILED") {
+        sendRegistrationRejectedEmail(
+          delegate.email,
+          delegate.fullName
+        );
+      }
+    }
 
     return NextResponse.json({ success: true, payment: updatedPayment }, { status: 200 });
 

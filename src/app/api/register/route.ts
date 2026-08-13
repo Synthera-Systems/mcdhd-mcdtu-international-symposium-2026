@@ -1,7 +1,8 @@
-// --- src/app/api/register/route.ts ---
+// src/app/api/register/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
+import { sendRegistrationReceivedEmail } from "@/lib/email"; 
 
 export async function POST(request: Request) {
   try {
@@ -9,7 +10,6 @@ export async function POST(request: Request) {
     const { 
       fullName, affiliation, email, category, 
       utrNumber, screenshotUrl, participationType 
-      // REMOVED: linkedAbstractId
     } = body;
 
     if (!fullName || !email || !utrNumber || !screenshotUrl || !category) {
@@ -36,7 +36,6 @@ export async function POST(request: Request) {
       data: {
         fullName, affiliation, email, category: mappedCategory,
         participationType: participationType || "GENERAL_ATTENDEE", 
-        // linkedAbstractId remains null here. It will be updated later when they submit an abstract.
         referenceId,
         payment: {
           create: {
@@ -46,6 +45,10 @@ export async function POST(request: Request) {
       },
     });
 
+    // 1. Send immediate registration acknowledgement email
+    sendRegistrationReceivedEmail(email, fullName, referenceId);
+
+    // 2. Trigger asynchronous AI background worker
     const baseUrl = request.headers.get('origin') || 'http://localhost:3000';
     fetch(`${baseUrl}/api/engine/ai_worker`, {
       method: 'POST',

@@ -77,38 +77,53 @@ export const sendRegistrationVerifiedEmail = async (toEmail: string, fullName: s
   catch (error) { console.error("Error sending verification email:", error); }
 };
   
-export const sendActionRequiredEmail = async (toEmail: string, fullName: string, actionToken: string, reason: string) => {
+export const sendActionRequiredEmail = async (toEmail: string, fullName: string, actionToken: string) => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
   const actionLink = `${baseUrl}/action/${actionToken}`;
 
   const mailOptions = {
     from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Action Required: Payment Verification Failed",
+    subject: "Action Required: Payment Receipt Clarification - MitoCan-Symposium 2026",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
-        <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Action Required</h2>
+        <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Clarification Needed</h2>
         <p style="font-size: 16px;">Dear ${fullName},</p>
-        <p style="font-size: 16px; line-height: 1.5;">We encountered an issue while verifying your payment receipt for the MitoCan-Symposium 2026.</p>
+        <p style="font-size: 16px; line-height: 1.5;">Thank you for registering for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong>.</p>
+        <p style="font-size: 16px; line-height: 1.5;">Our automated verification system was unable to validate your payment receipt automatically.</p>
         
         <div style="background-color: #fff1f2; border-left: 4px solid #e11d48; padding: 15px; margin: 25px 0;">
-          <p style="margin: 0; font-size: 14px; color: #9f1239;"><strong>Reason for failure:</strong></p>
-          <p style="margin: 5px 0 0 0; font-size: 14px; font-weight: bold; color: #9f1239;">${reason}</p>
+          <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #9f1239;">Common reasons for verification issues:</p>
+          <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #9f1239; line-height: 1.6;">
+            <li>The image was blurry, cropped, or partially unreadable.</li>
+            <li>The 12-digit UTR / Bank Reference Number was cut off.</li>
+            <li>The entered UTR number differed from the transaction receipt.</li>
+          </ul>
         </div>
 
-        <p style="font-size: 16px; line-height: 1.5;">Don't worry! Your registration details are saved. You just need to upload a clearer image of your bank transfer/UPI receipt.</p>
+        <p style="font-size: 16px; line-height: 1.5;"><strong>What you need to do:</strong></p>
+        <p style="font-size: 16px; line-height: 1.5;">Don't worry—your registration details remain safely stored! Please click the button below to upload a clear, full screenshot of your bank transfer or UPI receipt showing the complete UTR number.</p>
         
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${actionLink}" style="background-color: #002147; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Upload New Receipt</a>
+          <a href="${actionLink}" style="background-color: #002147; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Upload Corrected Receipt</a>
         </div>
 
-        <p style="font-size: 14px; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">If the button doesn't work, copy and paste this secure link into your browser: <br/><br/><span style="word-break: break-all; color: #0056b3;">${actionLink}</span></p>
+        <p style="font-size: 14px; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
+          If the button above does not work, copy and paste this link into your browser: <br/><br/>
+          <span style="word-break: break-all; color: #0056b3;">${actionLink}</span>
+        </p>
+        <br/>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
 
-  try { await transporter.sendMail(mailOptions); } 
-  catch (error) { console.error("Error sending action required email:", error); }
+  try { 
+    await transporter.sendMail(mailOptions); 
+    console.log(`[Email] Action required notice sent to ${toEmail}`);
+  } catch (error) { 
+    console.error("Error sending action required email:", error); 
+  }
 };
 
 // ============================================================================
@@ -209,4 +224,80 @@ export const sendAbstractRejectedEmail = async (toEmail: string, title: string) 
 
   try { await transporter.sendMail(mailOptions); } 
   catch (error) { console.error("Error sending abstract rejected email:", error); }
+};
+
+/**
+ * Sends the final "Registration Approved & Confirmed" pass email to the delegate.
+ */
+export const sendRegistrationApprovedEmail = async (toEmail: string, fullName: string, referenceId: string, category: string) => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const submissionsLink = `${baseUrl}/submissions`;
+
+  const mailOptions = {
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: "Registration Confirmed - Delegate Pass Issued | MitoCan-Symposium 2026",
+    html: `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
+        <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Registration Confirmed! 🎉</h2>
+        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <p style="font-size: 16px; line-height: 1.5;">We are delighted to confirm that your payment has been verified and your delegate registration for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong> is now fully approved!</p>
+        
+        <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 25px 0;">
+          <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #166534; font-weight: bold;">Official Delegate Pass</p>
+          <p style="margin: 8px 0 4px 0; font-size: 22px; font-family: monospace; font-weight: bold; color: #002147;">${referenceId}</p>
+          <p style="margin: 0; font-size: 14px; color: #166534;"><strong>Category:</strong> ${category}</p>
+        </div>
+
+        <p style="font-size: 16px; line-height: 1.5; font-weight: bold;">Presenting a Poster or Oral Talk?</p>
+        <p style="font-size: 16px; line-height: 1.5;">If you haven't submitted your scientific abstract yet, you can now link your abstract directly to this Reference ID on our submissions portal.</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${submissionsLink}" style="background-color: #002147; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Go to Submissions Portal</a>
+        </div>
+
+        <p style="font-size: 16px; line-height: 1.5;">We look forward to welcoming you to Tezpur University!</p>
+        <br/>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong><br/>MitoCan-Symposium 2026</p>
+      </div>
+    `,
+  };
+
+  try { 
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email] Approval pass sent to ${toEmail}`);
+  } catch (error) { 
+    console.error("Error sending approval email:", error); 
+  }
+};
+
+/**
+ * Sends a "Registration Rejected" email if payment verification fails manually.
+ */
+export const sendRegistrationRejectedEmail = async (toEmail: string, fullName: string) => {
+  const mailOptions = {
+    from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
+    to: toEmail,
+    subject: "Registration Payment Update - MitoCan-Symposium 2026",
+    html: `
+      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
+        <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Verification Rejected</h2>
+        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <p style="font-size: 16px; line-height: 1.5;">Regrettably, our organizing committee was unable to verify your payment transaction for the MitoCan-Symposium 2026.</p>
+        
+        <p style="font-size: 16px; line-height: 1.5;">This can happen if the UTR/Transaction ID did not match our bank statement, or if the receipt image uploaded was unreadable.</p>
+
+        <p style="font-size: 16px; line-height: 1.5;">If you believe this is an error or if you have made the payment, please reply directly to this email with your valid transaction receipt attached so our team can assist you immediately.</p>
+        <br/>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong></p>
+      </div>
+    `,
+  };
+
+  try { 
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email] Rejection notice sent to ${toEmail}`);
+  } catch (error) { 
+    console.error("Error sending rejection email:", error); 
+  }
 };
