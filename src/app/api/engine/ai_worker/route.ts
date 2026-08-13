@@ -1,5 +1,5 @@
 // src/app/api/engine/ai_worker/route.ts
-
+export const maxDuration = 60; 
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -85,10 +85,13 @@ export async function POST(request: Request) {
     // 6. Log the outcome and trigger the correct Nodemailer email
     if (aiData.isValidReceipt) {
       console.log(`[AI Worker] SUCCESS: ${referenceId} verified.`);
-      sendRegistrationVerifiedEmail(email, fullName, referenceId); 
+      await sendRegistrationVerifiedEmail(email, fullName, referenceId); 
     } else {
       console.log(`[AI Worker] FAILED: ${referenceId} flagged. Reason: ${aiData.reason}`);
-      sendActionRequiredEmail(email, fullName, actionToken);
+      if (!actionToken) {
+        console.error("[AI Worker Error]: actionToken is missing from request body!");
+      }
+      await sendActionRequiredEmail(email, fullName, actionToken);
     }
 
     return NextResponse.json({ success: true, status: newStatus });
