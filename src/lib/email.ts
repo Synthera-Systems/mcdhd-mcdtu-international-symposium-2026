@@ -10,6 +10,12 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Helper function to dynamically standardize salutations
+const formatSalutation = (fullName: string): string => {
+  if (!fullName) return "Dear Delegate";
+  return `Dear ${fullName.trim()}`;
+};
+
 // ============================================================================
 // REGISTRATION & PAYMENT EMAILS
 // ============================================================================
@@ -25,7 +31,7 @@ export const sendRegistrationReceivedEmail = async (toEmail: string, fullName: s
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Application Received</h2>
-        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <p style="font-size: 16px;">${formatSalutation(fullName)},</p>
         <p style="font-size: 16px; line-height: 1.5;">Thank you for submitting your registration for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong>.</p>
         <p style="font-size: 16px; line-height: 1.5;">Your application and payment details are currently under review by our organizing committee.</p>
         
@@ -36,7 +42,7 @@ export const sendRegistrationReceivedEmail = async (toEmail: string, fullName: s
 
         <p style="font-size: 16px; line-height: 1.5;">You can use this Reference ID to track your application status on our portal at any time.</p>
         <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong></p>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
@@ -46,7 +52,6 @@ export const sendRegistrationReceivedEmail = async (toEmail: string, fullName: s
     console.log(`Success: Email sent to ${toEmail}`);
   } catch (error) {
     console.error("Error sending email:", error);
-    // We log the error but don't throw it, so the registration still succeeds even if the email fails.
   }
 };
 
@@ -58,7 +63,7 @@ export const sendRegistrationVerifiedEmail = async (toEmail: string, fullName: s
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Verified</h2>
-        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <p style="font-size: 16px;">${formatSalutation(fullName)},</p>
         <p style="font-size: 16px; line-height: 1.5;">Great news! Our automated system has successfully verified your payment receipt for the MitoCan-Symposium 2026.</p>
         <p style="font-size: 16px; line-height: 1.5;">Your application is now marked as <strong>Pending Final Approval</strong>. The organizing committee will do a final review and issue your official delegate pass shortly.</p>
         
@@ -68,7 +73,7 @@ export const sendRegistrationVerifiedEmail = async (toEmail: string, fullName: s
 
         <p style="font-size: 16px; line-height: 1.5;">You will receive one final email once your delegate pass is generated.</p>
         <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong></p>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
@@ -88,7 +93,7 @@ export const sendActionRequiredEmail = async (toEmail: string, fullName: string,
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Clarification Needed</h2>
-        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <p style="font-size: 16px;">${formatSalutation(fullName)},</p>
         <p style="font-size: 16px; line-height: 1.5;">Thank you for registering for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong>.</p>
         <p style="font-size: 16px; line-height: 1.5;">Our automated verification system was unable to validate your payment receipt automatically.</p>
         
@@ -149,7 +154,7 @@ export const sendAbstractReceivedEmail = async (toEmail: string, title: string, 
 
         <p style="font-size: 16px; line-height: 1.5;">Your submission is currently queued for our triple-blind peer review process. We will notify you of the scientific committee's decision soon.</p>
         <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong></p>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
@@ -186,7 +191,7 @@ export const sendAbstractAcceptedEmail = async (toEmail: string, title: string, 
         </div>
 
         <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong></p>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
@@ -217,7 +222,7 @@ export const sendAbstractRejectedEmail = async (toEmail: string, title: string) 
         </div>
 
         <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong></p>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
@@ -240,7 +245,7 @@ export const sendRegistrationApprovedEmail = async (toEmail: string, fullName: s
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Registration Confirmed! 🎉</h2>
-        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <p style="font-size: 16px;">${formatSalutation(fullName)},</p>
         <p style="font-size: 16px; line-height: 1.5;">We are delighted to confirm that your payment has been verified and your delegate registration for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong> is now fully approved!</p>
         
         <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 25px 0;">
@@ -281,15 +286,15 @@ export const sendRegistrationRejectedEmail = async (toEmail: string, fullName: s
     subject: "Registration Payment Update - MitoCan-Symposium 2026",
     html: `
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
-        <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Verification Rejected</h2>
-        <p style="font-size: 16px;">Dear ${fullName},</p>
+        <h2 style="color: #93000a; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Payment Verification Update</h2>
+        <p style="font-size: 16px;">${formatSalutation(fullName)},</p>
         <p style="font-size: 16px; line-height: 1.5;">Regrettably, our organizing committee was unable to verify your payment transaction for the MitoCan-Symposium 2026.</p>
         
         <p style="font-size: 16px; line-height: 1.5;">This can happen if the UTR/Transaction ID did not match our bank statement, or if the receipt image uploaded was unreadable.</p>
 
         <p style="font-size: 16px; line-height: 1.5;">If you believe this is an error or if you have made the payment, please reply directly to this email with your valid transaction receipt attached so our team can assist you immediately.</p>
         <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong></p>
+        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Organizing Committee</strong><br/>MitoCan-Symposium 2026</p>
       </div>
     `,
   };
