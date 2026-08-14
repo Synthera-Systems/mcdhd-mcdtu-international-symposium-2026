@@ -36,7 +36,7 @@ const getInitials = (name: string) => {
 
 export const keyspeakersData = [
   { name: "Prof. Sharmila Bapat", affiliation: "BRIC-National Centre for Cell Science, Pune, India", image: "/speakers/sharmila-bapat.png" },
-  { name: "Prof. Jerry Chipuk", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/jerry-chipuk.png" },
+  { name: "Prof. Jerry Chipuk", affiliation: "Florida International University, USA", image: "/speakers/jerry-chipuk.png" },
   { name: "Prof. R. P. Singh", affiliation: "Gautam Buddha University, Noida, India", image: "/speakers/rp-singh.png" },
 ];
 
