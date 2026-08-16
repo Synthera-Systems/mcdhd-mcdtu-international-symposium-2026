@@ -246,7 +246,7 @@ export const sendRegistrationApprovedEmail = async (toEmail: string, fullName: s
       <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
         <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Registration Confirmed! 🎉</h2>
         <p style="font-size: 16px;">${formatSalutation(fullName)},</p>
-        <p style="font-size: 16px; line-height: 1.5;">We are delighted to confirm that your payment has been verified and your delegate registration for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong> is now fully approved!</p>
+        <p style="font-size: 16px; line-height: 1.5;">We are delighted to confirm that your registration for the <strong>International Symposium on Mitochondria, Cell Death, and Human Disease</strong> is approved!</p>
         
         <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 25px 0;">
           <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #166534; font-weight: bold;">Official Delegate Pass</p>
