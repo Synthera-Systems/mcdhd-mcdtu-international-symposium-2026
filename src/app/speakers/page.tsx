@@ -56,7 +56,7 @@ export const speakersData = [
   { name: "Prof Subhash Gupta", affiliation: "AIIMS, Guwahati, India", image: "/speakers/subhash.png" },
   { name: "Prof. Pankaj Singh", affiliation: "The University of Oklahoma College of Medicine, Oklahoma, USA", image: "/speakers/pankaj-singh.png" },
   // { name: "Prof. Doris Germain", affiliation: "Icahn School of Medicine Mount Sinai, New York, USA", image: "/speakers/doris-germain.png" },
-  { name: "Prof. Yidong Bai", affiliation: "University of Texas San Antonio, Texas, USA", image: "/speakers/yidong-bai.png" },
+  // { name: "Prof. Yidong Bai", affiliation: "University of Texas San Antonio, Texas, USA", image: "/speakers/yidong-bai.png" },
   { name: "Prof. Paulraj Rajamani", affiliation: "Jawaharlal Nehru University, Delhi, India", image: "/speakers/paulraj.png" },
   { name: "Prof. Umesh Chand Singh Yadav", affiliation: "Jawaharlal Nehru University, Delhi, India", image: "/speakers/umesh.png" },
   { name: "Dr. Surendra Kumar Shukla", affiliation: "University of Oklahoma Health Sciences Center (OUHSC), Oklahoma, USA", image: "/speakers/surendra.png" },
