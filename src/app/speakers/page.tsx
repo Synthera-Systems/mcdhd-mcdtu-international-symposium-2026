@@ -71,7 +71,7 @@ export const speakersData = [
   // { name: "Dr. Komal Raina", affiliation: "South Dakota University, USA", image: "/speakers/komal-raina.png" },
   // { name: "Dr. Neera Tiwari Singh", affiliation: "Michigan University, USA", image: "/speakers/neera-singh.png" },
   { name: "Prof. Sarad Mishra", affiliation: "DDU Gorakhpur University, Gorakhpur, India", image: "/speakers/sarad-mishra.png" },
-  { name: "Dr. Dipali Sharma", affiliation: "Johns Hopkins University, Baltimore, USA", image: "/speakers/dipali-sharma.png" },
+  // { name: "Dr. Dipali Sharma", affiliation: "Johns Hopkins University, Baltimore, USA", image: "/speakers/dipali-sharma.png" },
   { name: "Dr. Subhrajit Saha", affiliation: "University of Kansas Medical Center, Kansas, USA", image: "/speakers/subhrajit-saha.png" },
   { name: "Dr. Pooja Jadiya", affiliation: "Wake Forest University, Winston-Salem, USA", image: "/speakers/pooja-jadiya.png" },
   { name: "Dr. Ashok K Varma", affiliation: "ACTREC, Navi Mumbai, India", image: "/speakers/ashok.png" },
