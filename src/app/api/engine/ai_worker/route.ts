@@ -3,7 +3,7 @@ export const maxDuration = 60;
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { sendRegistrationVerifiedEmail, sendActionRequiredEmail } from "@/lib/email";
+import { sendRegistrationVerifiedEmail } from "@/lib/email"; // 👈 Only auto-send verified receipts
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY as string);
 
@@ -13,20 +13,18 @@ async function generateWithRetry(model: any, prompt: string, imagePart: any, max
     try {
       return await model.generateContent([prompt, imagePart]);
     } catch (error: any) {
-      // If it's a 503 error and we have retries left, wait and try again
       if (error?.status === 503 && i < maxRetries - 1) {
-        const delayMs = Math.pow(2, i) * 1500; // Wait 1.5s, then 3s, then 6s
+        const delayMs = Math.pow(2, i) * 1500;
         console.log(`[AI Worker] Gemini API overloaded (503). Retrying in ${delayMs}ms...`);
         await new Promise(resolve => setTimeout(resolve, delayMs));
       } else {
-        throw error; // Throw if it's not a 503, or if we ran out of retries
+        throw error;
       }
     }
   }
 }
 
 export async function POST(request: Request) {
-  // Define variables here so the catch block can use them for the fallback
   let delegateId, utrNumber, screenshotUrl, email, fullName, referenceId, actionToken;
 
   try {
@@ -64,7 +62,7 @@ export async function POST(request: Request) {
 
     const imagePart = { inlineData: { data: base64Image, mimeType } };
     
-    // 4. Use the robust retry function instead of a single call
+    // 4. Retry loop
     const result = await generateWithRetry(model, prompt, imagePart);
     
     const responseText = result?.response.text().replace(/```json\n?|\n?```/g, "").trim();
@@ -82,16 +80,13 @@ export async function POST(request: Request) {
       }
     });
 
-    // 6. Log the outcome and trigger the correct Nodemailer email
+    // 6. Handle email actions
     if (aiData.isValidReceipt) {
       console.log(`[AI Worker] SUCCESS: ${referenceId} verified.`);
       await sendRegistrationVerifiedEmail(email, fullName, referenceId); 
     } else {
-      console.log(`[AI Worker] FAILED: ${referenceId} flagged. Reason: ${aiData.reason}`);
-      if (!actionToken) {
-        console.error("[AI Worker Error]: actionToken is missing from request body!");
-      }
-      await sendActionRequiredEmail(email, fullName, actionToken);
+      console.log(`[AI Worker] FLAGGED: ${referenceId} placed in Flagged queue for admin moderation. Reason: ${aiData.reason}`);
+      // Admin will review under the "Flagged" tab and decide whether to send the email or approve.
     }
 
     return NextResponse.json({ success: true, status: newStatus });
@@ -99,15 +94,15 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("[AI Worker Fatal Error]:", error);
 
-    // 7. Graceful Fallback: Push to manual review if AI completely fails
+    // 7. Graceful Fallback
     if (delegateId) {
-      console.log(`[AI Worker] Routing ${referenceId || delegateId} to Manual Review due to API failure.`);
+      console.log(`[AI Worker] Routing ${referenceId || delegateId} to Manual Review.`);
       
       try {
         await prisma.payment.update({
           where: { delegateId },
           data: {
-            status: "PENDING_APPROVAL", // Route to Admin Dashboard safely
+            status: "PENDING_APPROVAL",
             aiValidationLog: `Manual Review Required: AI Engine failed to process receipt. Error: ${error.message || 'Unknown'}`
           }
         });

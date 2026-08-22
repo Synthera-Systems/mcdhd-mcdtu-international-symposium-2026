@@ -1,6 +1,6 @@
-// --- src/app/api/admin/abstracts/purge/route.ts ---
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { verifyAdminSession } from "@/lib/auth";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseAdmin = createClient(
@@ -9,17 +9,21 @@ const supabaseAdmin = createClient(
 );
 
 export async function POST(request: Request) {
+  const isAuthenticated = await verifyAdminSession();
+  if (!isAuthenticated) {
+    return NextResponse.json({ error: "Unauthorized access" }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
-    const { abstractId } = body; // Expects standard database ID string
+    const { abstractId } = body;
 
     if (!abstractId) {
       return NextResponse.json({ error: "Abstract record target ID is required." }, { status: 400 });
     }
 
-    // 1. Locate the scientific manuscript entry first
     const abstractRow = await prisma.submission.findUnique({
-      where: { id: abstractId }
+      where: { id: abstractId },
     });
 
     if (!abstractRow) {
@@ -27,10 +31,9 @@ export async function POST(request: Request) {
     }
 
     if (abstractRow.fileUrl === "DOWNLOADED_AND_PURGED") {
-      return NextResponse.json({ error: "This file asset has already been purged from object cloud memory storage." }, { status: 400 });
+      return NextResponse.json({ error: "This file asset has already been purged." }, { status: 400 });
     }
 
-    // 2. Isolate file path pointer and remove it from the Supabase Abstracts storage bucket
     const pathKey = abstractRow.fileUrl.split("/").pop();
     if (pathKey) {
       const { error: storageError } = await supabaseAdmin.storage
@@ -39,24 +42,22 @@ export async function POST(request: Request) {
 
       if (storageError) {
         console.error("Supabase clear warning:", storageError);
-        throw new Error("Failed to clear raw asset from cloud bucket memory storage.");
+        throw new Error("Failed to clear raw asset from cloud bucket.");
       }
     }
 
-    // 3. Mark row as downloaded and purged so it never crashes later admin processes
     const updatedRow = await prisma.submission.update({
       where: { id: abstractId },
-      data: { fileUrl: "DOWNLOADED_AND_PURGED" }
+      data: { fileUrl: "DOWNLOADED_AND_PURGED" },
     });
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       message: "Abstract manuscript deleted safely. Bucket capacity cleared.",
-      updatedStatus: updatedRow.fileUrl 
+      updatedStatus: updatedRow.fileUrl,
     }, { status: 200 });
-
   } catch (error: any) {
     console.error("Abstract Purging Handler Crash:", error);
-    return NextResponse.json({ error: error.message || "Internal server error during purging routing." }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal server error during purging." }, { status: 500 });
   }
 }
