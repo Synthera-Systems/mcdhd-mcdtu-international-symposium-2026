@@ -1,22 +1,37 @@
+// src/app/api/verify_delegate/route.ts
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { registrationRefId } = await req.json();
+    const body = await req.json();
+    
+    // Accept either registrationRefId or referenceId
+    const rawId = body.registrationRefId || body.referenceId;
 
-    if (!registrationRefId) {
-      return NextResponse.json({ valid: false, message: "ID is required" }, { status: 400 });
+    if (!rawId) {
+      return NextResponse.json(
+        { valid: false, message: "Reference ID is required" }, 
+        { status: 400 }
+      );
     }
 
-    // 1. Check if Registration / Delegate ID exists
-    const { data: delegate, error: delegateError } = await supabase
-      .from("registrations") // or "delegates"
-      .select("id, full_name, email")
-      .eq("reference_id", registrationRefId)
-      .maybeSingle();
+    const cleanedId = String(rawId).trim().toUpperCase();
 
-    if (delegateError || !delegate) {
+    // 1. Check if Delegate exists in the Delegate table
+    const delegate = await prisma.delegate.findFirst({
+      where: {
+        referenceId: {
+          equals: cleanedId,
+          mode: "insensitive",
+        },
+      },
+      include: {
+        payment: true,
+      },
+    });
+
+    if (!delegate) {
       return NextResponse.json({ 
         valid: false, 
         reason: "NOT_FOUND",
@@ -24,12 +39,15 @@ export async function POST(req: Request) {
       });
     }
 
-    // 2. Check if an abstract has already been submitted with this ID
-    const { data: existingSubmission, error: subError } = await supabase
-      .from("abstracts")
-      .select("id")
-      .eq("registration_ref_id", registrationRefId)
-      .maybeSingle();
+    // 2. Check if an abstract has already been submitted under this Reference ID
+    const existingSubmission = await prisma.submission.findFirst({
+      where: {
+        referenceId: {
+          equals: cleanedId,
+          mode: "insensitive",
+        },
+      },
+    });
 
     if (existingSubmission) {
       return NextResponse.json({ 
@@ -39,16 +57,23 @@ export async function POST(req: Request) {
       });
     }
 
-    // Return success metadata if needed (e.g. pre-fill presenter email/name)
+    // 3. Return verified delegate details to pre-fill form fields
     return NextResponse.json({ 
       valid: true, 
       delegate: {
-        fullName: delegate.full_name,
-        email: delegate.email
+        id: delegate.id,
+        fullName: delegate.fullName,
+        email: delegate.email,
+        category: delegate.category,
+        referenceId: delegate.referenceId,
       }
     });
 
-  } catch (error) {
-    return NextResponse.json({ valid: false, message: "Server error during verification" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Verification route error:", error);
+    return NextResponse.json(
+      { valid: false, message: "Server error during verification" }, 
+      { status: 500 }
+    );
   }
 }
