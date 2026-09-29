@@ -163,74 +163,132 @@ export const sendAbstractReceivedEmail = async (toEmail: string, title: string, 
   catch (error) { console.error("Error sending abstract received email:", error); }
 };
 
-export const sendAbstractAcceptedEmail = async (toEmail: string, title: string, referenceId: string, presentationType: string) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const registerLink = `${baseUrl}/registration`;
-
+export async function sendAbstractAcceptedEmail(
+  toEmail: string,
+  abstractTitle: string,
+  referenceId: string,
+  presentationType: "Oral Presentation" | "Poster Presentation"
+) {
   const mailOptions = {
     from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Abstract Accepted! Action Required - MitoCan-Symposium 2026",
+    subject: `Abstract Selected: ${presentationType} - MitoCan-Symp 2026`,
     html: `
-      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
-        <h2 style="color: #166534; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Abstract Accepted</h2>
-        <p style="font-size: 16px;">Dear Researcher,</p>
-        <p style="font-size: 16px; line-height: 1.5;">Congratulations! The scientific committee has completed its review and we are pleased to inform you that your abstract has been accepted for the upcoming symposium.</p>
-        
-        <div style="background-color: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 25px 0;">
-          <p style="margin: 0; font-size: 14px;"><strong>Title:</strong> ${title}</p>
-          <p style="margin: 8px 0; font-size: 14px;"><strong>Format:</strong> <span style="font-weight: bold; color: #166534;">${presentationType}</span></p>
-          <p style="margin: 0; font-size: 14px;"><strong>Abstract ID:</strong> <span style="font-family: monospace; font-weight: bold;">${referenceId}</span></p>
-        </div>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px 0; color: #1e293b; }
+          .card { max-width: 540px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+          .header { background: #002147; padding: 28px 24px; text-align: center; color: #ffffff; }
+          .header h1 { margin: 0; font-size: 20px; font-weight: 700; }
+          .header p { margin: 4px 0 0; font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+          .body { padding: 32px 28px; line-height: 1.6; }
+          .pill { display: inline-block; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 13px; font-weight: 700; padding: 6px 14px; rounded-full; border-radius: 9999px; margin: 12px 0 20px 0; }
+          .detail-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin: 20px 0; }
+          .item { margin-bottom: 12px; font-size: 13px; }
+          .item:last-child { margin-bottom: 0; }
+          .label { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: bold; letter-spacing: 0.5px; }
+          .val { font-size: 14px; font-weight: 600; color: #0f172a; margin-top: 2px; }
+          .footer { border-top: 1px solid #f1f5f9; padding: 18px 24px; text-align: center; font-size: 11px; color: #64748b; background: #fafafa; }
+        </style>
+      </head>
+      <body>
+        <div class="card">
+          <div class="header">
+            <h1>MitoCan-Symposium 2026</h1>
+            <p>Department of MBBT, Tezpur University</p>
+          </div>
 
-        <p style="font-size: 16px; line-height: 1.5; font-weight: bold;">Important Next Step:</p>
-        <p style="font-size: 16px; line-height: 1.5;">To confirm your spot on the program, you must now complete your delegate registration and payment. <strong>Please keep your Abstract ID handy, as you will need to enter it during registration.</strong></p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${registerLink}" style="background-color: #002147; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Proceed to Registration</a>
-        </div>
+          <div class="body">
+            <p style="margin: 0 0 12px 0; font-size: 15px;">Dear Presenter,</p>
+            <p style="margin: 0; font-size: 14px; color: #334155;">
+              We are pleased to inform you that your abstract submission has been accepted for <strong>${presentationType}</strong> at MitoCan-Symp 2026.
+            </p>
 
-        <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong><br/>MitoCan-Symposium 2026</p>
-      </div>
-    `,
+            <div>
+              <span class="pill">Selected for ${presentationType}</span>
+            </div>
+
+            <div class="detail-box">
+              <div class="item">
+                <div class="label">Reference ID</div>
+                <div class="val" style="font-family: monospace; color: #002147;">${referenceId}</div>
+              </div>
+              <div class="item">
+                <div class="label">Abstract Title</div>
+                <div class="val">${abstractTitle}</div>
+              </div>
+              <div class="item">
+                <div class="label">Delegate Status</div>
+                <div class="val" style="color: #059669;">Confirmed & Registered</div>
+              </div>
+            </div>
+
+            <p style="font-size: 13px; color: #475569; margin: 20px 0 0 0;">
+              The session schedule and presentation slots will be shared with you closer to the event dates. If you have any questions, you can reply directly to this email.
+            </p>
+          </div>
+
+          <div class="footer">
+            Organizing Committee | MitoCan-Symp 2026<br/>
+            Tezpur University, Assam, India
+          </div>
+        </div>
+      </body>
+      </html>
+    `
   };
 
-  try { await transporter.sendMail(mailOptions); } 
-  catch (error) { console.error("Error sending abstract accepted email:", error); }
-};
+  return await transporter.sendMail(mailOptions);
+}
 
-export const sendAbstractRejectedEmail = async (toEmail: string, title: string) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-  const registerLink = `${baseUrl}/registration`;
-
+export async function sendAbstractRejectedEmail(
+  toEmail: string,
+  abstractTitle: string
+) {
   const mailOptions = {
     from: `"MitoCan-Symposium 2026" <${process.env.EMAIL_USER}>`,
     to: toEmail,
-    subject: "Update on your Abstract Submission - MitoCan-Symposium 2026",
+    subject: `Abstract Review Outcome - MitoCan-Symp 2026`,
     html: `
-      <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333333; border: 1px solid #eaeaec; border-radius: 8px;">
-        <h2 style="color: #002147; border-bottom: 2px solid #eaeaec; padding-bottom: 10px;">Submission Update</h2>
-        <p style="font-size: 16px;">Dear Researcher,</p>
-        <p style="font-size: 16px; line-height: 1.5;">Thank you for submitting your abstract titled <em>"${title}"</em>.</p>
-        <p style="font-size: 16px; line-height: 1.5;">We received a record number of excellent submissions this year. Unfortunately, after careful consideration by our scientific committee, we are unable to accept your abstract for presentation at this time.</p>
-        
-        <p style="font-size: 16px; line-height: 1.5;">We highly value your interest in mitochondria and cell death research. We warmly invite you to still join us at the symposium as a <strong>General Attendee</strong> to participate in the scientific dialogue, attend keynote sessions, and network with global experts.</p>
-        
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${registerLink}" style="background-color: #002147; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Register as an Attendee</a>
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 0; color: #1e293b; }
+          .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow: hidden; }
+          .header { background: #002147; padding: 28px 24px; text-align: center; color: #ffffff; }
+          .body { padding: 32px 28px; line-height: 1.6; font-size: 14px; color: #334155; }
+          .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 18px; text-align: center; font-size: 12px; color: #64748b; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2 style="margin:0; font-size: 20px;">MitoCan-Symposium 2026</h2>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: #94a3b8;">Abstract Review Decision</p>
+          </div>
+          <div class="body">
+            <p>Dear Author,</p>
+            <p>Thank you for submitting your abstract titled <strong>"${abstractTitle}"</strong> for consideration at MitoCan-Symp 2026.</p>
+            <p>Due to the high volume of submissions and schedule limitations within each session track, we regret to inform you that your abstract could not be accommodated for presentation at this edition of the symposium.</p>
+            <p>Please note that your delegate registration remains valid and confirmed. We warmly welcome your participation in all keynote sessions, panel discussions, and scientific workshops during the event.</p>
+          </div>
+          <div class="footer">
+            <p style="margin: 0;">Organizing Committee | MitoCan-Symp 2026</p>
+            <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">Tezpur University, Assam, India</p>
+          </div>
         </div>
-
-        <br/>
-        <p style="font-size: 14px; color: #666;">Best regards,<br/><strong>The Scientific Committee</strong><br/>MitoCan-Symposium 2026</p>
-      </div>
+      </body>
+      </html>
     `,
   };
 
-  try { await transporter.sendMail(mailOptions); } 
-  catch (error) { console.error("Error sending abstract rejected email:", error); }
-};
-
+  return await transporter.sendMail(mailOptions);
+}
 /**
  * Sends the final "Registration Approved & Confirmed" pass email to the delegate.
  */
