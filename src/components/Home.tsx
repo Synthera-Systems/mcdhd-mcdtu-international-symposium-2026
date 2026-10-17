@@ -36,7 +36,7 @@ const associationLogos = [
   { name: "Cachar Cancer Hospital & Research Centre", src: "/logos/cachar.png" },
   { name: "Excellence Christ Service", src: "/logos/christ.png" },
   { name: "JNU. New Delhi", src: "/logos/jnu.png" },
-  { name: "JNU Pair Network", src: "/logos/JNUN.png" }
+  // { name: "JNU Pair Network", src: "/logos/JNUN.png" }
 ];
 
 export default function Home() {
@@ -478,11 +478,15 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 w-full max-w-7xl">
             {[
-              // { name: "Anusandhan National Research Foundation (ANRF)", src: "/logos/anrf.png" },
+              { name: "Anusandhan National Research Foundation (ANRF)", src: "/logos/anrf.png" },
               { name: "Indian Council of Medical Research (ICMR)", src: "/logos/icmr.png" },
               { name: "Department of Health Research (DHR)", src: "/logos/dhr.png" },
               { name: "Council of Scientific and Industrial Research (CSIR)", src: "/logos/csir.png" },
-              { name: "JNU Pair Network", src: "/logos/JNUN.png" }
+              // { name: "JNU Pair Network", src: "/logos/JNUN.png" },
+              { name: "Molbiogen", src: "/logos/molbiogen.png" },
+              { name: "SRL", src: "/logos/srl.png" },
+              { name: "TCI Chemicals", src: "/logos/tci.png" },
+
             ].map((partner, idx) => (
               <motion.div 
                 key={idx} 

@@ -85,3 +85,38 @@
 .animate-draw-ring {
   animation: draw-ring 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+/* Registration deadline marquee (home page, below navbar) */
+@keyframes deadline-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.deadline-marquee-track {
+  animation: deadline-marquee 28s linear infinite;
+  will-change: transform;
+}
+
+@media (max-width: 640px) {
+  .deadline-marquee-track {
+    animation-duration: 22s;
+  }
+}
+
+.deadline-marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deadline-marquee-track {
+    animation: none;
+    width: 100%;
+  }
+  .deadline-marquee-track > p {
+    white-space: normal;
+    padding-right: 1rem;
+  }
+  .deadline-marquee-track > p[aria-hidden="true"] {
+    display: none;
+  }
+}

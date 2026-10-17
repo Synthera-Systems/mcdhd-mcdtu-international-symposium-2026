@@ -2,10 +2,20 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import crypto from "crypto";
-import { sendRegistrationReceivedEmail } from "@/lib/email"; 
+import { sendRegistrationReceivedEmail } from "@/lib/email";
+import { getRegistrationPhase, REGISTRATION_CONTACT_EMAIL } from "@/lib/registrationDeadline";
 
 export async function POST(request: Request) {
   try {
+    // Hard cut-off: online registration closes 18 Oct 2026 midnight (IST).
+    const phase = getRegistrationPhase();
+    if (phase !== "ONLINE_OPEN") {
+      const message = phase === "EMAIL_ONLY"
+        ? `Online registration closed on 18th October midnight. Registration requests are accepted via email only (${REGISTRATION_CONTACT_EMAIL}) till 20th October midnight.`
+        : "Registration for MitoCan-Symposium 2026 is now closed.";
+      return NextResponse.json({ error: message, registrationClosed: true }, { status: 403 });
+    }
+
     const body = await request.json();
     const { 
       fullName, affiliation, email, category, 

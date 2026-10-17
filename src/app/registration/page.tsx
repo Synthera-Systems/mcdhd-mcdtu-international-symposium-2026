@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import imageCompression from "browser-image-compression";
 import ImageCropperModal from "../../components/ImageCropperModal";
+import { getRegistrationPhase, REGISTRATION_CONTACT_EMAIL, type RegistrationPhase } from "@/lib/registrationDeadline";
 
 const springInteraction = { 
   whileTap: { scale: 0.97 }, 
@@ -90,6 +91,15 @@ export default function RegistrationPage() {
 
   const [loadingSettings, setLoadingSettings] = useState(true);
 
+  // --- Deadline gate (online registration closes 18 Oct 2026 midnight IST) ---
+  const [registrationPhase, setRegistrationPhase] = useState<RegistrationPhase>(() => getRegistrationPhase());
+  useEffect(() => {
+    const tick = () => setRegistrationPhase(getRegistrationPhase());
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
   useEffect(() => {
     fetch("/api/settings")
       .then((res) => res.json())
@@ -167,6 +177,12 @@ export default function RegistrationPage() {
   const handleRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (getRegistrationPhase() !== "ONLINE_OPEN") {
+      setRegistrationPhase(getRegistrationPhase());
+      setError(`Online registration closed on 18th October midnight. Please email ${REGISTRATION_CONTACT_EMAIL} to request registration (till 20th October).`);
+      return;
+    }
 
     if (!formData.fullName || !formData.email || !formData.utrNumber || !receiptFile || !selectedTier) {
       setError("Please fill all required fields and upload a payment receipt.");
@@ -301,6 +317,70 @@ export default function RegistrationPage() {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
             Submit another registration
           </button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  // --- REGISTRATION CLOSED SCREEN ---
+  if (registrationPhase !== "ONLINE_OPEN") {
+    const emailOnly = registrationPhase === "EMAIL_ONLY";
+    const mailSubject = encodeURIComponent("Registration Request - MitoCan-Symposium 2026");
+    const mailBody = encodeURIComponent(
+      "Dear Organising Committee,\n\nI would like to request registration for MitoCan-Symposium 2026.\n\nFull Name:\nAffiliation:\nCategory (Student / Faculty / Industry / Foreign):\nParticipation (General Attendee / Presenter):\n\nRegards,\n"
+    );
+    return (
+      <div className="w-full min-h-[100svh] md:min-h-[85vh] flex items-center justify-center bg-surface px-4 sm:px-6 py-12">
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="bg-white p-6 sm:p-10 md:p-12 rounded-3xl shadow-[0_20px_60px_-15px_rgba(0,33,71,0.1)] max-w-lg w-full text-center border border-surface-dim/30 relative overflow-hidden"
+        >
+          <div className={`absolute top-0 left-0 w-full h-2 ${emailOnly ? "bg-secondary" : "bg-[#ba1a1a]"}`} />
+
+          <div className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-sm border ${
+            emailOnly ? "bg-secondary/10 text-secondary border-secondary/20" : "bg-[#ffdad6] text-[#93000a] border-[#ba1a1a]/20"
+          }`}>
+            {emailOnly ? (
+              <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+            ) : (
+              <svg className="w-10 h-10 sm:w-12 sm:h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+            )}
+          </div>
+
+          <p className="font-inter text-[10px] sm:text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2 sm:mb-3">
+            Online registration closed on 18th October
+          </p>
+          <h2 className="font-playfair text-2xl sm:text-3xl font-bold text-primary mb-3 sm:mb-4">
+            {emailOnly ? "Request Registration via Email" : "Registration Closed"}
+          </h2>
+          <p className="font-inter text-sm sm:text-base text-on-surface-variant mb-6 sm:mb-8 leading-relaxed px-2">
+            {emailOnly
+              ? "Online registration is no longer available. Requests for registration are accepted via email only until 20th October midnight. Please send your details to the organising committee."
+              : "Registration for MitoCan-Symposium 2026 has ended. Thank you for the overwhelming response. For any queries, please contact the organising committee."}
+          </p>
+
+          {emailOnly && (
+            <a
+              href={`mailto:${REGISTRATION_CONTACT_EMAIL}?subject=${mailSubject}&body=${mailBody}`}
+              className="w-full bg-primary text-white font-inter font-medium text-sm sm:text-base py-3.5 sm:py-4 rounded-xl flex items-center justify-center gap-2 sm:gap-3 hover:bg-primary-container transition-colors shadow-lg shadow-primary/20 mb-4"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+              Email Registration Request
+            </a>
+          )}
+
+          <p className="font-inter text-xs sm:text-sm text-on-surface-variant break-all">
+            <a href={`mailto:${REGISTRATION_CONTACT_EMAIL}`} className="text-secondary font-semibold hover:underline">{REGISTRATION_CONTACT_EMAIL}</a>
+          </p>
+
+          <div className="w-full h-px bg-surface-dim/40 my-6 sm:my-8" />
+
+          <Link href="/status" className="text-xs sm:text-sm font-inter text-secondary hover:text-secondary-container hover:underline transition-colors font-medium flex items-center justify-center gap-2 mx-auto">
+            Already registered? Track your application
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </Link>
         </motion.div>
       </div>
     );
